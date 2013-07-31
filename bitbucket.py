@@ -6,17 +6,10 @@ import os
 import sys
 import getpass
 from os.path import expanduser
+from Crypto.Cipher import ARC4
 
 home = expanduser("~")
-filename = os.path.join(home, '.bitbucket-cookies')
-
-def save_cookies(requests_cookiejar, filename):
-    with open(filename, 'wb') as f:
-        pickle.dump(requests_cookiejar, f)
-
-def load_cookies(filename):
-    with open(filename, 'rb') as f:
-        return pickle.load(f)
+filename = os.path.join(home, '.bitbucket-creds')
 
 def login():
 	url = "https://bitbucket.org/api/1.0/user/"
@@ -33,17 +26,20 @@ def login():
 		passwd = p1
 	r = requests.get(url, auth=(user, passwd))
 	status = r.status_code
-	msg = "Authentication Error. Invalid Username or Password."
-	if status != 200:
-		#print "Authentication Error. Invalid Username or Password."
-		sys.stdout.write(msg); sys.stdout.flush()
+		if status != 200:
+		print "Authentication Error. Invalid Username or Password."
 	else:
-		sys.stdout.flush()
-		save_cookies(r.cookies, filename)
 		print "Login Successful."
 
+def listofrepos():
+	cred = ('ypanchal', '302#raj')
+	url = "https://bitbucket.org/api/1.0/user/repositories/"
+	r = requests.get(url, auth=cred)
+	print r.text
+	
 if __name__ == '__main__':
-	login()
+	#login()
+	listofrepos()
 
 
 
