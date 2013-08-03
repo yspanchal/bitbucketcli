@@ -11,16 +11,17 @@ from cliff.command import Command
 from cliff.lister import Lister
 from cliff.show import ShowOne
 
+home = expanduser("~")
+filename = os.path.join(home, '.bitbucket.py')
+creds = imp.load_source('.bitbucket', filename)
+user = creds.username
+passwd = creds.passwd
 
 class Repolist(Lister):
 	log = logging.getLogger(__name__ + '.Repolist')
 
 	def take_action(self, parsed_args):
-		home = expanduser("~")
-		filename = os.path.join(home, '.bitbucket.py')
-		creds = imp.load_source('.bitbucket', filename)
-		user = creds.username
-		passwd = creds.passwd
+		self.log.debug('take_action(%s)' % parsed_args)
 		url = "https://bitbucket.org/api/1.0/user/repositories/"
 		r = requests.get(url, auth=(user, passwd))
 		data = json.loads(r.text)
@@ -37,17 +38,19 @@ class Repodetail(ShowOne):
 		return parser
 
 	def take_action(self, parsed_args):
-		home = expanduser("~")
-		filename = os.path.join(home, '.bitbucket.py')
-		creds = imp.load_source('.bitbucket', filename)
-		user = creds.username
-		passwd = creds.passwd
+		self.log.debug('take_action(%s)' % parsed_args)
 		url = "https://bitbucket.org/api/1.0/user/repositories/"		
 		r = requests.get(url, auth=(user, passwd))
 		data = json.loads(r.text)
 		for i in data:
-			if i['name'] == parsed_args.reponame:
+			if i['name'] != parsed_args.reponame:
+				self.app.stdout.write('\nError: ' + '"' + parsed_args.reponame + '"' + ' No such repository found.\n\n')
+				sys.exit(1)
+			else:
+				i.pop('logo')
+				i.pop('resource_uri')
 				columns = i.viewkeys()
 				data = i.viewvalues()
-		return (columns, data)
+				return (columns, data)
+		
 
