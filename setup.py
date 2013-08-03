@@ -63,6 +63,7 @@ setup(
         'cliff.bitbucket': [
             'repolist = bitbucket.list:Repolist',
             'repodetail = bitbucket.list:Repodetail',
+            'user = bitbucket.user:User', 
             ],
         },
 
