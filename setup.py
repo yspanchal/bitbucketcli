@@ -61,7 +61,6 @@ setup(
             'bitbucket = bitbucket.main:main'
             ],
         'cliff.bitbucket': [
-            'login = bitbucket.login:Login',
             'repolist = bitbucket.list:Repolist',
             'repodetail = bitbucket.list:Repodetail',
             ],

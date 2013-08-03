@@ -6,6 +6,7 @@ import getpass
 import json
 from os.path import expanduser
 from cliff.app import App
+from cliff import help
 from cliff.commandmanager import CommandManager
 
 
