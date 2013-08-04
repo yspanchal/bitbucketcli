@@ -31,3 +31,17 @@ class User(ShowOne):
 		columns = userdata.viewkeys()
 		data = userdata.viewvalues()
 		return (columns, data)
+
+class Userprivileges(ShowOne):
+	log = logging.getLogger(__name__ + '.User')
+
+	def take_action(self, parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+		url = "https://bitbucket.org/api/1.0/user/privileges/"
+		r = requests.get(url, auth=(user, passwd))
+		jsondata = json.loads(r.text)
+		userdata = jsondata['teams']
+		columns = userdata.viewkeys()
+		data = userdata.viewvalues()
+		return (columns, data)
+		
