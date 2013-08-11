@@ -7,8 +7,6 @@ import json
 import imp
 import argparse
 from os.path import expanduser
-from cliff.command import Command
-from cliff.lister import Lister
 from cliff.show import ShowOne
 
 home = expanduser("~")
@@ -44,4 +42,4 @@ class Userprivileges(ShowOne):
 		columns = userdata.viewkeys()
 		data = userdata.viewvalues()
 		return (columns, data)
-		
+

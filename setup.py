@@ -64,7 +64,8 @@ setup(
             'repolist = bitbucket.list:Repolist',
             'repodetail = bitbucket.list:Repodetail',
             'user_info = bitbucket.user:User',
-            'user_privileges = bitbucket.user:Userprivileges', 
+            'user_privileges = bitbucket.user:Userprivileges',
+            'issue = bitbucket.issues:Getissue', 
             ],
         },
 
