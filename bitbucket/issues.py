@@ -217,6 +217,7 @@ class Createissue(ShowOne):
 			return (columns, columndata)
 		else:
 			self.app.stdout.write("\nInvalid Request. Invalid argument supplied.\n")
+			sys.exit(1)
 
 
 class Editissue(ShowOne):
@@ -300,3 +301,29 @@ class Editissue(ShowOne):
 			return (columns, columndata)
 		else:
 			self.app.stdout.write("\nInvalid Request. Invalid argument supplied.\n")
+			sys.exit(1)
+
+
+class Deleteissue(ShowOne):
+	log = logging.getLogger(__name__ + '.Deleteissue')
+
+
+	def get_parser(self, prog_name):
+		parser = super(Deleteissue, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>',  required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>',  required=True, help='The repository name')
+		parser.add_argument('--id', '-i', metavar='<issue id>',  required=True, help='The Issue ID')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/" % (parsed_args.account,parsed_args.reponame,parsed_args.id)
+		r = requests.delete(url, auth=(user, passwd))
+		if r.status_code == 204:
+			self.app.stdout.write("\nIssue Deleted Successfully.\n\n")
+			sys.exit(0)
+		else:
+			print "\n" + r.text + "\n"
+			self.app.stdout.write("Invalid Issue ID Supplied.\n\n")
+			sys.exit(1)
