@@ -65,7 +65,8 @@ setup(
             'repodetail = bitbucket.list:Repodetail',
             'user_info = bitbucket.user:User',
             'user_privileges = bitbucket.user:Userprivileges',
-            'issue = bitbucket.issues:Getissue', 
+            'issue = bitbucket.issues:Getissue',
+            'issue_create = bitbucket.issues:Createissue', 
             ],
         },
 
