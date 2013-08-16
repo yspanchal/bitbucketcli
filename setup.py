@@ -66,7 +66,8 @@ setup(
             'user_info = bitbucket.user:User',
             'user_privileges = bitbucket.user:Userprivileges',
             'issue = bitbucket.issues:Getissue',
-            'issue_create = bitbucket.issues:Createissue', 
+            'issue_create = bitbucket.issues:Createissue',
+            'issue-edit = bitbucket.issues:Editissue',
             ],
         },
 
