@@ -7,6 +7,7 @@ import argparse
 import logging
 import requests
 import urllib
+import prettytable
 from os.path import expanduser
 from cliff.show import ShowOne
 from cliff.command import Command
@@ -25,8 +26,8 @@ class Getissue(ShowOne):
 
 	def get_parser(self, prog_name):
 		parser = super(Getissue, self).get_parser(prog_name)
-		parser.add_argument('--account', '-a', metavar='<account name>',  required=True, help='Your account name')
-		parser.add_argument('--reponame', '-r', metavar='<repo name>',  required=True, help='The repository name')
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
 		parser.add_argument('--status', '-s', metavar='<issue status>', choices=['new', 'open', 'resolved', 'on hold', 'invalid', 'duplicate', 'wontfix'], required=False, help='The list of issues sort by  status')
 		parser.add_argument('--kind', '-k', metavar='<kind>', choices=['bug', 'enhancement', 'proposal', 'task'], required=False, help='The list of issues sort by kind')
 		parser.add_argument('--priority', '-p', metavar='<priority>', choices=['trivial', 'minor', 'major', 'critical', 'blocker'], required=False, help='The list of issues sort by priority')
@@ -143,9 +144,9 @@ class Createissue(ShowOne):
 
 	def get_parser(self, prog_name):
 		parser = super(Createissue, self).get_parser(prog_name)
-		parser.add_argument('--account', '-a', metavar='<account name>',  required=True, help='Your account name')
-		parser.add_argument('--reponame', '-r', metavar='<repo name>',  required=True, help='The repository name')
-		parser.add_argument('--title', '-t', metavar='<issue title>',  required=True, help='Issue title')
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--title', '-t', metavar='<issue title>', required=True, help='Issue title')
 		parser.add_argument('--content', '-d', metavar='<issue content>', required=False, help='Description about issue')
 		parser.add_argument('--status', '-s', metavar='<issue status>', choices=['new', 'open', 'resolved', 'on hold', 'invalid', 'duplicate', 'wontfix'], required=False, help='The list of issues sort by  status')
 		parser.add_argument('--kind', '-k', metavar='<kind>', choices=['bug', 'enhancement', 'proposal', 'task'], required=False, help='The list of issues sort by kind')
@@ -226,11 +227,11 @@ class Editissue(ShowOne):
 
 	def get_parser(self, prog_name):
 		parser = super(Editissue, self).get_parser(prog_name)
-		parser.add_argument('--account', '-a', metavar='<account name>',  required=True, help='Your account name')
-		parser.add_argument('--reponame', '-r', metavar='<repo name>',  required=True, help='The repository name')
-		parser.add_argument('--id', '-i', metavar='<issue id>',  required=True, help='The Issue ID')
-		parser.add_argument('--title', '-t', metavar='<issue title>',  required=False, help='Issue title')
-		parser.add_argument('--content', '-d', metavar='<issue content>', required=False, help='Description about issue')
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--id', '-i', metavar='<issue id>', required=True, help='The Issue ID')
+		parser.add_argument('--title', '-t', metavar='<issue title>', required=False, help='Issue title')
+		parser.add_argument('--content', '-d', metavar='<issue content>',required=False, help='Description about issue')
 		parser.add_argument('--status', '-s', metavar='<issue status>', choices=['new', 'open', 'resolved', 'on hold', 'invalid', 'duplicate', 'wontfix'], required=False, help='The list of issues sort by  status')
 		parser.add_argument('--kind', '-k', metavar='<kind>', choices=['bug', 'enhancement', 'proposal', 'task'], required=False, help='The list of issues sort by kind')
 		parser.add_argument('--priority', '-p', metavar='<priority>', choices=['trivial', 'minor', 'major', 'critical', 'blocker'], required=False, help='The list of issues sort by priority')
@@ -310,9 +311,9 @@ class Deleteissue(ShowOne):
 
 	def get_parser(self, prog_name):
 		parser = super(Deleteissue, self).get_parser(prog_name)
-		parser.add_argument('--account', '-a', metavar='<account name>',  required=True, help='Your account name')
-		parser.add_argument('--reponame', '-r', metavar='<repo name>',  required=True, help='The repository name')
-		parser.add_argument('--id', '-i', metavar='<issue id>',  required=True, help='The Issue ID')
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--id', '-i', metavar='<issue id>', required=True, help='The Issue ID')
 		return parser
 
 	def take_action(self,parsed_args):
@@ -327,3 +328,34 @@ class Deleteissue(ShowOne):
 			print "\n" + r.text + "\n"
 			self.app.stdout.write("Invalid Issue ID Supplied.\n\n")
 			sys.exit(1)
+
+
+class Getcomment(ShowOne):
+	log = logging.getLogger(__name__ + '.Getcomment')
+
+	def get_parser(self, prog_name):
+		parser = super(Getcomment, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--id', '-i', metavar='<issue id>', required=True, help='The Issue ID')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/comments/" % (parsed_args.account,parsed_args.reponame,parsed_args.id)
+		r = requests.get(url, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			for comment in data:
+				print "\n"
+				print "Comment: %s" % (comment['content'])
+				newdata = prettytable.PrettyTable(["Fields", "Values"])
+				newdata.padding_width = 1
+				newdata.add_row(["Comment Author", comment['author_info']['display_name']])
+				newdata.add_row(["Comment ID", comment['comment_id']])
+				newdata.add_row(["UTC Updated on", comment['utc_updated_on']])
+				newdata.add_row(["UTC Created on", comment['utc_created_on']])
+				print newdata
+				print "---------------------------------------------------------------"
+			sys.exit(1)					

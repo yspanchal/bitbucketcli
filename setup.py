@@ -63,12 +63,13 @@ setup(
         'cliff.bitbucket': [
             'repolist = bitbucket.list:Repolist',
             'repodetail = bitbucket.list:Repodetail',
-            'user_info = bitbucket.user:User',
-            'user_privileges = bitbucket.user:Userprivileges',
+            'user-info = bitbucket.user:User',
+            'user-privileges = bitbucket.user:Userprivileges',
             'issue = bitbucket.issues:Getissue',
             'issue-create = bitbucket.issues:Createissue',
             'issue-edit = bitbucket.issues:Editissue',
             'issue-delete = bitbucket.issues:Deleteissue',
+            'issue-getcomment = bitbucket.issues:Getcomment',
             ],
         },
 
