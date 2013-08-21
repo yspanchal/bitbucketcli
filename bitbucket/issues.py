@@ -330,7 +330,7 @@ class Deleteissue(ShowOne):
 			sys.exit(1)
 
 
-class Getcomment(ShowOne):
+class Getcomment(command):
 	log = logging.getLogger(__name__ + '.Getcomment')
 
 	def get_parser(self, prog_name):
@@ -358,4 +358,41 @@ class Getcomment(ShowOne):
 				newdata.add_row(["UTC Created on", comment['utc_created_on']])
 				print newdata
 				print "---------------------------------------------------------------"
-			sys.exit(1)					
+			sys.exit(0)
+		else:
+			self.app.stdout.write("\nInvalid Request. Invalid argument supplied.\n")
+			sys.exit(1)
+
+
+class Postcomment(command):
+	log = logging.getLogger(__name__ + '.Postcomment')
+
+	def get_parser(self, prog_name):
+		parser = super(Postcomment, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--id', '-i', metavar='<issue id>', required=True, help='The Issue ID')
+		parser.add_argument('--content', '-c', metavar='<issue content>', required=True, help='The Issue Content')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/comments/" % (parsed_args.account,parsed_args.reponame,parsed_args.id)
+		r = requests.post(url, data=parsed_args.content auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\n"
+			print "Comment: %s" % (data['content'])
+			newdata = prettytable.PrettyTable(["Fields", "Values"])
+			newdata.padding_width = 1
+			newdata.add_row(["Comment Author", data['author_info']['display_name']])
+			newdata.add_row(["Comment ID", data['comment_id']])
+			newdata.add_row(["UTC Updated on", data['utc_updated_on']])
+			newdata.add_row(["UTC Created on", data['utc_created_on']])
+			print newdata
+			print "---------------------------------------------------------------"
+			sys.exit(0)
+		else:
+			self.app.stdout.write("\nInvalid Request. Invalid argument supplied.\n")
+			sys.exit(1)

@@ -28,8 +28,8 @@ setup(
     description='Bitbucket command line',
     long_description=long_description,
 
-    author='Doug Hellmann',
-    author_email='doug.hellmann@gmail.com',
+    author='Yogesh Panchal',
+    author_email='yspanchal@gmail.com',
 
     url='https://github.com/dreamhost/cliff',
     download_url='https://github.com/dreamhost/cliff/tarball/master',
@@ -61,8 +61,9 @@ setup(
             'bitbucket = bitbucket.main:main'
             ],
         'cliff.bitbucket': [
-            'repolist = bitbucket.list:Repolist',
-            'repodetail = bitbucket.list:Repodetail',
+            'repolist = bitbucket.repository:Repolist',
+            'repodetail = bitbucket.repository:Repodetail',
+            'repotag = bitbucket.repository:Repotag',
             'user-info = bitbucket.user:User',
             'user-privileges = bitbucket.user:Userprivileges',
             'issue = bitbucket.issues:Getissue',
@@ -70,6 +71,7 @@ setup(
             'issue-edit = bitbucket.issues:Editissue',
             'issue-delete = bitbucket.issues:Deleteissue',
             'issue-getcomment = bitbucket.issues:Getcomment',
+            'issue-postcomment = bitbucket.issues:Postcomment',
             ],
         },
 
