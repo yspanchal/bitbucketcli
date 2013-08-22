@@ -73,6 +73,8 @@ setup(
             'issue-delete = bitbucket.issues:Deleteissue',
             'issue-getcomment = bitbucket.issues:Getcomment',
             'issue-postcomment = bitbucket.issues:Postcomment',
+            'wiki-get = bitbucket.wiki:Wikiget',
+            'wiki-post = bitbucket.wiki:Wikipost',
             ],
         },
 
