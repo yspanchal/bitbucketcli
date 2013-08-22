@@ -93,7 +93,12 @@ class Getissue(ShowOne):
 			sys.exit(1)
 
 		r = requests.get(url, auth=(user, passwd))
-		data = json.loads(r.text)
+		
+		try:
+			data = json.loads(r.text)
+		except:
+			print "\n Error: '404' No Issues Found 'or' Invalid argument supplied.\n"
+			sys.exit(1)
 		
 		if issuelist_url != {} and issuedetail_url == {} and issuefilter_url == {} and issuefollowers_url == {}:
 			print "\nTotal Issues: %s\n" % (data['count'])
@@ -330,7 +335,7 @@ class Deleteissue(ShowOne):
 			sys.exit(1)
 
 
-class Getcomment(command):
+class Getcomment(Command):
 	log = logging.getLogger(__name__ + '.Getcomment')
 
 	def get_parser(self, prog_name):
@@ -364,7 +369,7 @@ class Getcomment(command):
 			sys.exit(1)
 
 
-class Postcomment(command):
+class Postcomment(Command):
 	log = logging.getLogger(__name__ + '.Postcomment')
 
 	def get_parser(self, prog_name):
@@ -379,7 +384,7 @@ class Postcomment(command):
 		self.log.debug('take_action(%s)' % parsed_args)
 
 		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/comments/" % (parsed_args.account,parsed_args.reponame,parsed_args.id)
-		r = requests.post(url, data=parsed_args.content auth=(user, passwd))
+		r = requests.post(url, data=parsed_args.content, auth=(user, passwd))
 		if r.status_code == 200:
 			data = json.loads(r.text)
 			print "\n"
