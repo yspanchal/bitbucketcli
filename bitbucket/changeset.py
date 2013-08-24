@@ -115,8 +115,10 @@ class Changesetcommentsget(Command):
 		r = requests.get(url, auth=(user, passwd))
 		if r.status_code == 200:
 			data = json.loads(r.text)
-			if not data:
-				print "\n No Any Comments Found.\n"
+			for comment in data:
+				if not 'content' in comment:
+					print "\n No Any Comments Found.\n"
+					sys.exit(1)
 			else:
 				for comment in data:
 					print "\nCommit ID: %s\n" % (comment['node'])
@@ -130,3 +132,69 @@ class Changesetcommentsget(Command):
 					print "------------------------------------------------------"
 
 				sys.exit(0)
+		else:
+			print "\n Error: Invalid request, or invalid commit id"
+			sys.exit(1)
+
+
+class Changesetcommentpost(Command):
+	log = logging.getLogger(__name__ + '.Changesetcommentpost')
+
+	def get_parser(self, prog_name):
+		parser = super(Changesetcommentpost, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--commit', '-c', metavar='<commit_id>', required=True, help='The commit id or commit hash')
+		parser.add_argument('--comment', '-C', metavar='<comment>', required=True, help='The comment content')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/changesets/%s/comments/" % (parsed_args.account,parsed_args.reponame,parsed_args.commit)
+
+		args = {}
+		args['content'] = parsed_args.comment
+		r = requests.post(url, data=args, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\nCommit ID: %s\n" % (data['node'])
+			print "Comment: %s\n" % (data['content'])
+			newdata = prettytable.PrettyTable(["Fields", "Values"])
+			newdata.add_row(["Name", data['display_name']])
+			newdata.add_row(["Comment ID", data['comment_id']])
+			newdata.add_row(["Created On", data['utc_created_on']])
+			newdata.add_row(["Updated On", data['utc_last_updated']])
+			print newdata
+			sys.exit(0)
+		else:
+			print "\n Error: Invalid request, or invalid commit id"
+			sys.exit(1)
+
+
+class Changesetcommentdelete(Command):
+	log = logging.getLogger(__name__ + '.Changesetcommentdelete')
+
+	def get_parser(self, prog_name):
+		parser = super(Changesetcommentdelete, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--commit', '-c', metavar='<commit_id>', required=True, help='The commit id or commit hash')
+		parser.add_argument('--comment_id', '-id', metavar='<comment_id>', required=True, help='The comment content id')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/changesets/%s/comments/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.commit,parsed_args.comment_id)
+
+		r = requests.delete(url, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\nCommit ID: %s\n" % (data['node'])
+			print "Comment ID: %s" % (data['comment_id'])
+			print "Comment " + "'" + str(data['comment_id']) + "'" " deleted successfully."
+			sys.exit(0)
+		else:
+			print "\n Error: Invalid request, or invalid commit id or invalid comment id."
+			sys.exit(1)
