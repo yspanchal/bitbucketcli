@@ -18,6 +18,61 @@ creds = imp.load_source('.bitbucket', filename)
 user = creds.username
 passwd = creds.passwd
 
+
+class Repocreate(ShowOne):
+	log = logging.getLogger(__name__ + '.Repocreate')
+
+	def get_parser(self, prog_name):
+		parser = super(Repocreate, self).get_parser(prog_name)
+		parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
+		parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
+		parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], required=False, help='repository is private ?')
+		parser.add_argument('--scm', '-s', metavar='<scm>', choices=['git', 'hg'], required=False, help='The repository scm')
+		parser.add_argument('--has_issues', '-i', metavar='<has_issues>', choices=['true', 'false'], required=False, help='The repository has issues ?')
+		parser.add_argument('--has_wiki', '-w', metavar='<has_wiki>', choices=['true', 'false'], required=False, help='The repository has wiki ?')
+		return parser
+
+	def take_action(self, parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		args = {}
+
+		if parsed_args.reponame:
+			args['name'] = parsed_args.reponame
+
+		if parsed_args.description:
+			args['description'] = parsed_args.description
+
+		if parsed_args.is_private:
+			args['is_private'] = parsed_args.is_private
+
+		if parsed_args.scm:
+			args['scm'] = parsed_args.scm
+
+		if parsed_args.has_issues:
+			args['has_issues'] = parsed_args.has_issues
+
+		if parsed_args.has_wiki:
+			args['has_wiki'] = parsed_args.has_wiki
+
+		url = "https://bitbucket.org/api/1.0/repositories"		
+		r = requests.post(url, data=args, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			data.pop('logo')
+			data.pop('resource_uri')
+			columns = data.viewkeys()
+			data = data.viewvalues()
+			print "\nRepository " + "'" + parsed_args.reponame + "'" "Created.\n"
+			return (columns, data)
+		elif r.status_code == 400:
+			self.app.stdout.write("\n Error: " + "'" + str(r.status_code) + "'" + " You already have a repository with name " + "'" + parsed_args.reponame + "'" + ".\n")
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\nError: Bad request.\n')
+			sys.exit(1)
+
+
 class Repolist(Lister):
 	log = logging.getLogger(__name__ + '.Repolist')
 

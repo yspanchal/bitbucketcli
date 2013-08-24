@@ -66,6 +66,7 @@ setup(
             'commit-comments-post = bitbucket.changeset:Changesetcommentpost',
             'commit-comments-delete = bitbucket.changeset:Changesetcommentdelete',
             'repo-changeset = bitbucket.changeset:Changesetget',
+            'repo-create = bitbucket.repository:Repocreate',
             'repolist = bitbucket.repository:Repolist',
             'repodetail = bitbucket.repository:Repodetail',
             'repotag = bitbucket.repository:Repotag',
