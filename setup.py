@@ -61,6 +61,8 @@ setup(
             'bitbucket = bitbucket.main:main'
             ],
         'cliff.bitbucket': [
+            'commit-detail = bitbucket.changeset:Commitget',
+            'repo-changeset = bitbucket.changeset:Changesetget',
             'repolist = bitbucket.repository:Repolist',
             'repodetail = bitbucket.repository:Repodetail',
             'repotag = bitbucket.repository:Repotag',
