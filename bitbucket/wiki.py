@@ -59,8 +59,11 @@ class Wikipost(Command):
 	def take_action(self,parsed_args):
 		self.log.debug('take_action(%s)' % parsed_args)
 
+		args = {}
+		args['content'] = parsed_args.content
+
 		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/wiki/%s/" % (parsed_args.account,parsed_args.reponame,parsed_args.page)
-		r = requests.post(url, data=parsed_args.content, auth=(user, passwd))
+		r = requests.post(url, data=args, auth=(user, passwd))
 		if r.status_code == 200:
 			data = json.loads(r.text)
 			print "\n Wiki Page Created Successfully.\n"
