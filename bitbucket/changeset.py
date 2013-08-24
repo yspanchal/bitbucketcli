@@ -95,3 +95,38 @@ class Commitget(Command):
 			print "Branches: %s" % (data['branches'])
 			print "Commit Message: %s" % (data['message'])
 			print "-------------------------------------------------------"
+
+
+class Changesetcommentsget(Command):
+	log = logging.getLogger(__name__ + '.Changesetcommentsget')
+
+	def get_parser(self, prog_name):
+		parser = super(Changesetcommentsget, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--commit', '-c', metavar='<commit_id>', required=True, help='The commit id or commit hash')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/changesets/%s/comments/" % (parsed_args.account,parsed_args.reponame,parsed_args.commit)
+
+		r = requests.get(url, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			if not data:
+				print "\n No Any Comments Found.\n"
+			else:
+				for comment in data:
+					print "\nCommit ID: %s\n" % (comment['node'])
+					print "Comment: %s\n" % (comment['content'])
+					newdata = prettytable.PrettyTable(["Fields", "Values"])
+					newdata.add_row(["Name", comment['display_name']])
+					newdata.add_row(["Comment ID", comment['comment_id']])
+					newdata.add_row(["Created On", comment['utc_created_on']])
+					newdata.add_row(["Updated On", comment['utc_last_updated']])
+					print newdata
+					print "------------------------------------------------------"
+
+				sys.exit(0)

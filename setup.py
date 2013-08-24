@@ -62,6 +62,7 @@ setup(
             ],
         'cliff.bitbucket': [
             'commit-detail = bitbucket.changeset:Commitget',
+            'commit-comments = bitbucket.changeset:Changesetcommentsget',
             'repo-changeset = bitbucket.changeset:Changesetget',
             'repolist = bitbucket.repository:Repolist',
             'repodetail = bitbucket.repository:Repodetail',
