@@ -84,6 +84,7 @@ class Repoedit(ShowOne):
 		parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], required=False, help='repository is private ?')
 		parser.add_argument('--has_issues', '-i', metavar='<has_issues>', choices=['true', 'false'], required=False, help='The repository has issues ?')
 		parser.add_argument('--has_wiki', '-w', metavar='<has_wiki>', choices=['true', 'false'], required=False, help='The repository has wiki ?')
+		parser.add_argument('--language', '-l', metavar='<language>', required=False, help='The repository language')
 		return parser
 
 	def take_action(self, parsed_args):
@@ -103,6 +104,9 @@ class Repoedit(ShowOne):
 		if parsed_args.has_wiki:
 			args['has_wiki'] = parsed_args.has_wiki
 
+		if parsed_args.language:
+			args['language'] = parsed_args.language
+
 		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/" % (parsed_args.account,parsed_args.reponame)		
 		r = requests.put(url, data=args, auth=(user, passwd))
 		if r.status_code == 200:
@@ -113,8 +117,32 @@ class Repoedit(ShowOne):
 			data = data.viewvalues()
 			print "\nRepository " + "'" + parsed_args.reponame + "'" " Edited.\n"
 			return (columns, data)
+		if r.status_code == 400:
+			print "'" + parsed_args.language + "'" + " is not valid language choice."
+			sys.exit(1)
 		else:
 			self.app.stdout.write('\nError: Bad request.\n')
+			sys.exit(1)
+
+
+class Repodelete(Command):
+	log = logging.getLogger(__name__ + '.Repodelete')
+
+	def get_parser(self, prog_name):
+		parser = super(Repodelete, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', required=True, metavar='<account>', help='The repository account name')
+		parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s" % (parsed_args.account,parsed_args.reponame)
+		r = requests.delete(url, auth=(user, passwd))
+		if r.status_code == 204:
+			print "\n Repository " + "'" + parsed_args.reponame + "'" " Deleted.\n"
+			sys.exit(0)
+		else:
+			print " Error: Invalid requests, " + "'" + str(r.status_code) + "'" + " or No such repository found."
 			sys.exit(1)
 
 
@@ -183,7 +211,7 @@ class Repotag(Command):
 					newdata.add_row(["Message", data[i]['message']])
 					print newdata
 		else:
-			self.app.stdout.write('\nInvalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
 
 
 class Repobranch(Command):
@@ -216,4 +244,140 @@ class Repobranch(Command):
 					newdata.add_row(["Message", data[i]['message']])
 					print newdata
 		else:
-			self.app.stdout.write('\nInvalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+
+
+class Repodeploykeysget(Command):
+	log = logging.getLogger(__name__ + '.Repodeploykeysget')
+			
+	def get_parser(self, prog_name):
+		parser = super(Repodeploykeysget, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (parsed_args.account,parsed_args.reponame)
+
+		r = requests.get(url, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			if len(data) != 0:
+				for key in data:
+					print "\nKey ID: %s" % (key['pk'])
+					print "Key: %s" % (key['key'])
+					print "Key Label: %s" % (key['label'])
+					print "======================================================="
+				sys.exit(0)
+			else:
+				print "\n No deployment key found.\n"
+				sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+class Repodeploykeyspost(Command):
+	log = logging.getLogger(__name__ + '.Repodeploykeyspost')
+			
+	def get_parser(self, prog_name):
+		parser = super(Repodeploykeyspost, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--key', '-k', metavar='<key>', required=True, help='The repository deploy-key')
+		parser.add_argument('--label', '-l', metavar='<key-label>', required=True, help='The repository deploy-key label')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (parsed_args.account,parsed_args.reponame)
+		
+		args = {}
+
+		if parsed_args.key:
+			args['key'] = parsed_args.key
+
+		if parsed_args.label:
+			args['label'] = parsed_args.label
+
+		r = requests.post(url, data=args, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\nNew deployment key added."
+			print "\nKey ID: %s\n" % (data['pk'])
+			print "Key: %s\n" % (data['key'])
+			print "Key Label: %s\n" % (data['label'])
+			sys.exit(0)
+		elif r.status_code == 400:
+			print "\n Error: Someone has already registered this as an account SSH key.\n"
+			sys.exit(1)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Repodeploykeysedit(Command):
+	log = logging.getLogger(__name__ + '.Repodeploykeysedit')
+			
+	def get_parser(self, prog_name):
+		parser = super(Repodeploykeysedit, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--key', '-k', metavar='<key>', required=True, help='The repository deploy-key')
+		parser.add_argument('--label', '-l', metavar='<key-label>', required=True, help='The repository deploy-key label')
+		parser.add_argument('--key_id', '-i', metavar='<key_id>', required=True, help='The repository deploy-key ID')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.key_id)
+		
+		args = {}
+
+		if parsed_args.key:
+			args['key'] = parsed_args.key
+
+		if parsed_args.label:
+			args['label'] = parsed_args.label
+
+		r = requests.put(url, data=args, auth=(user, passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\nDeployment key edited."
+			print "\nKey ID: %s\n" % (data['pk'])
+			print "Key: %s\n" % (data['key'])
+			print "Key Label: %s\n" % (data['label'])
+			sys.exit(0)
+		elif r.status_code == 400:
+			print "\n Error: Someone has already registered this as an account SSH key.\n"
+			sys.exit(1)
+		else:
+			self.app.stdout.write('\n Error: ' + '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Repodeploykeysdelete(Command):
+	log = logging.getLogger(__name__ + '.Repodeploykeysdelete')
+			
+	def get_parser(self, prog_name):
+		parser = super(Repodeploykeysdelete, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--key_id', '-i', metavar='<key_id>', required=True, help='The repository deploy-key ID')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.key_id)
+
+		r = requests.delete(url, auth=(user, passwd))
+		if r.status_code == 204:
+			print "\n Success: Repository deployment key " + "'" + parsed_args.key_id + "'" " deleted.\n"
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
