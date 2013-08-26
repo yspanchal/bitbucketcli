@@ -78,6 +78,7 @@ setup(
             'repokeydeploy-edit = bitbucket.repository:Repodeploykeysedit',
             'repokeydeploy-delete = bitbucket.repository:Repodeploykeysdelete',
             'repo-fork = bitbucket.repository:Repofork',
+            'repo-revision = bitbucket.repository:Reporevision',
             'user-info = bitbucket.user:User',
             'user-privileges = bitbucket.user:Userprivileges',
             'issue = bitbucket.issues:Getissue',

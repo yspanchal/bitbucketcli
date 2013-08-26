@@ -425,3 +425,49 @@ class Repofork(Command):
 			data = data.viewvalues()
 			print "\nRepository " + "'" + parsed_args.reponame + "'" " Forked.\n"
 			return (columns, data)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Reporevision(Command):
+	log = logging.getLogger(__name__ + '.Reporevision')
+			
+	def get_parser(self, prog_name):
+		parser = super(Reporevision, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--revision', '-R', metavar='<revision>', required=True, help='The repository revision or branch name')
+		parser.add_argument('--path', '-p', metavar='<path>', help='File or directory path')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		if parsed_args.path:
+			url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.revision,parsed_args.path)
+		else:
+			url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/" % (parsed_args.account,parsed_args.reponame,parsed_args.revision)
+
+		print url
+		r = requests.get(url, auth=(user, passwd))
+
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\n Repository Source Details: \n"
+			print "Revision: '%s'" % (data['node'])
+			print "Path: '%s'" % (data['path'])
+			print "directories: %s" % (data['directories'])
+			print "Files: "
+			for f in data['files']:
+				newdata = prettytable.PrettyTable(["Fields", "Values"])
+				newdata.padding_width = 1
+				newdata.add_row(["Size", f['size']])
+				newdata.add_row(["Path", f['path']])
+				newdata.add_row(["TimeStamp", f['timestamp']])
+				newdata.add_row(["Revision", f['revision']])
+				print newdata
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
