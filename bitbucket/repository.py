@@ -381,3 +381,47 @@ class Repodeploykeysdelete(Command):
 		else:
 			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
 			sys.exit(1)
+
+
+class Repofork(Command):
+	log = logging.getLogger(__name__ + '.Repofork')
+			
+	def get_parser(self, prog_name):
+		parser = super(Repofork, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--name', '-n', metavar='<name>', required=True, help='The repository name')
+		parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
+		parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], help='The repository is private ?')
+		parser.add_argument('--language', '-l', metavar='<language>', help='The repository language')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/fork/" % (parsed_args.account,parsed_args.reponame)
+
+		args = {}
+
+		args['name'] = parsed_args.name
+
+		if parsed_args.description:
+			args['description'] = parsed_args.description
+
+		if parsed_args.is_private:
+			args['is_private'] = parsed_args.is_private
+
+		if parsed_args.language:
+			args['language'] = parsed_args.language
+
+		r = requests.post(url, data=args, auth=(user, passwd))
+
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			data.pop('logo')
+			data.pop('resource_uri')
+			data.pop('fork_of')
+			columns = data.viewkeys()
+			data = data.viewvalues()
+			print "\nRepository " + "'" + parsed_args.reponame + "'" " Forked.\n"
+			return (columns, data)
