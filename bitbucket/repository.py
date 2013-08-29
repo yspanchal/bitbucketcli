@@ -449,7 +449,6 @@ class Reporevision(Command):
 		else:
 			url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/" % (parsed_args.account,parsed_args.reponame,parsed_args.revision)
 
-		print url
 		r = requests.get(url, auth=(user, passwd))
 
 		if r.status_code == 200:
@@ -467,6 +466,89 @@ class Reporevision(Command):
 				newdata.add_row(["TimeStamp", f['timestamp']])
 				newdata.add_row(["Revision", f['revision']])
 				print newdata
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Reposharepost(Command):
+	log = logging.getLogger(__name__ + '.Reposharepost')
+			
+	def get_parser(self, prog_name):
+		parser = super(Reposharepost, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--share', '-s', metavar='<share_with>', required=True, help='Share repository with user')
+		parser.add_argument('--permission', '-p', metavar='<permission>', required=True, choices=['read', 'write', 'admin'], help='Repository permission')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.share)
+
+		args = {}
+		args['permission'] = parsed_args.permission
+		r = requests.put(url, data=parsed_args.permission, auth=(user,passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			print "\n Repository " + "'" + parsed_args.reponame + "'" + " shared with " + "'" + parsed_args.share + "'"
+			print "\nRepository: %s" % (data[0]['repo'])
+			print "Shared with: %s" % (data[0]['user']['username'])
+			print "Permission: %s" % (data[0]['privilege'])
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Reposhareget(Command):
+	log = logging.getLogger(__name__ + '.Reposhareget')
+			
+	def get_parser(self, prog_name):
+		parser = super(Reposhareget, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/privileges/%s/%s" % (parsed_args.account,parsed_args.reponame)
+
+		r = requests.get(url, auth=(user,passwd))
+		if r.status_code == 200:
+			data = json.loads(r.text)
+			for i in data:
+				print "\nRepository: %s" % (i['repo'])
+				print "Shared with: %s" % (i['user']['username'])
+				print "Permission: %s" % (i['privilege'])
+				print "================================================"
+			sys.exit(0)
+		else:
+			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+			sys.exit(1)
+
+
+class Reposharedelete(Command):
+	log = logging.getLogger(__name__ + '.Reposharedelete')
+			
+	def get_parser(self, prog_name):
+		parser = super(Reposharedelete, self).get_parser(prog_name)
+		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
+		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--share', '-s', metavar='<share_with>', required=True, help='Share repository with user')
+		return parser
+
+	def take_action(self,parsed_args):
+		self.log.debug('take_action(%s)' % parsed_args)
+
+		url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.share)
+
+		r = requests.delete(url, auth=(user,passwd))
+		if r.status_code == 204:
+			print "\n Privileges for user " + "'" + parsed_args.share + "'" + " removed on repository " + "'" + parsed_args.reponame + "'"
 			sys.exit(0)
 		else:
 			self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
