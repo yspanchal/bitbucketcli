@@ -42,4 +42,3 @@ class Userprivileges(ShowOne):
 		columns = userdata.viewkeys()
 		data = userdata.viewvalues()
 		return (columns, data)
-
