@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-PROJECT = 'bitbucket'
+
+PROJECT = 'Bitbucket Command Line Tool'
 
 # Change docs/sphinx/conf.py too!
 VERSION = '0.1'
@@ -77,6 +78,7 @@ setup(
             'issue_delete = bitbucket.issues:Deleteissue',
             'issue_getcomment = bitbucket.issues:Getcomment',
             'issue_postcomment = bitbucket.issues:Postcomment',
+            'logout = bitbucket.logout:Logout',
             'repo_changeset = bitbucket.changeset:Changesetget',
             'repo_create = bitbucket.repository:Repocreate',
             'repo_edit = bitbucket.repository:Repoedit',
