@@ -1,16 +1,14 @@
-import logging
-import requests
 import os
 import sys
-import getpass
-import json
 import imp
+import json
+import logging
+import requests
+import getpass
 import argparse
 import prettytable
 from os.path import expanduser
 from cliff.command import Command
-from cliff.lister import Lister
-from cliff.show import ShowOne
 
 
 home = expanduser("~")

@@ -1,17 +1,13 @@
 import os
 import sys
-import getpass
 import json
 import imp
 import argparse
 import logging
 import requests
-import urllib
 import prettytable
 from os.path import expanduser
-from cliff.show import ShowOne
 from cliff.command import Command
-from cliff.lister import Lister
 
 
 home = expanduser("~")
@@ -21,7 +17,7 @@ user = creds.username
 passwd = creds.passwd
 
 
-class Getissue(ShowOne):
+class Getissue(Command):
 	log = logging.getLogger(__name__ + '.Getissue')
 
 	def get_parser(self, prog_name):
@@ -143,7 +139,7 @@ class Getissue(ShowOne):
 			sys.exit(1)
 
 
-class Createissue(ShowOne):
+class Createissue(Command):
 	log = logging.getLogger(__name__ + '.Createissue')
 
 
@@ -226,7 +222,7 @@ class Createissue(ShowOne):
 			sys.exit(1)
 
 
-class Editissue(ShowOne):
+class Editissue(Command):
 	log = logging.getLogger(__name__ + '.Editissue')
 
 
@@ -310,7 +306,7 @@ class Editissue(ShowOne):
 			sys.exit(1)
 
 
-class Deleteissue(ShowOne):
+class Deleteissue(Command):
 	log = logging.getLogger(__name__ + '.Deleteissue')
 
 

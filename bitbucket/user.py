@@ -1,10 +1,9 @@
-import logging
-import requests
 import os
 import sys
-import getpass
-import json
 import imp
+import json
+import logging
+import requests
 import argparse
 from os.path import expanduser
 from cliff.show import ShowOne

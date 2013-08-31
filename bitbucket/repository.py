@@ -1,10 +1,9 @@
-import logging
-import requests
 import os
 import sys
-import getpass
-import json
 import imp
+import json
+import logging
+import requests
 import argparse
 import prettytable
 from os.path import expanduser
@@ -383,7 +382,7 @@ class Repodeploykeysdelete(Command):
 			sys.exit(1)
 
 
-class Repofork(Command):
+class Repofork(ShowOne):
 	log = logging.getLogger(__name__ + '.Repofork')
 			
 	def get_parser(self, prog_name):

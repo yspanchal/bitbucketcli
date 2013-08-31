@@ -1,9 +1,9 @@
+import os
 import sys
+import json
 import logging
 import requests
-import os
 import getpass
-import json
 from os.path import expanduser
 from cliff.app import App
 from cliff import help
@@ -16,7 +16,7 @@ class BitBucketApp(App):
 
     def __init__(self):
         super(BitBucketApp, self).__init__(
-            description='BitBucket Command Line Script',
+            description='BitBucket Command Line Tool',
             version='1.0',
             command_manager=CommandManager('cliff.bitbucket'),
             )
@@ -57,6 +57,9 @@ class BitBucketApp(App):
     def initialize_app(self, argv):
         self.log.debug('initialize_app')
         command_name = None
+        if argv:
+            cmd_info = self.command_manager.find_command(argv)
+            cmd_factory, cmd_name, sub_argv = cmd_info
         if self.interactive_mode or command_name != 'help':
             self.auth()
 
