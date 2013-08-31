@@ -34,6 +34,9 @@ passwd = creds.passwd
 
 
 class Getissue(Command):
+	"""
+	* Get list of issues
+	"""
 	log = logging.getLogger(__name__ + '.Getissue')
 
 	def get_parser(self, prog_name):
@@ -156,6 +159,9 @@ class Getissue(Command):
 
 
 class Createissue(Command):
+	"""
+	* Create new issue
+	"""
 	log = logging.getLogger(__name__ + '.Createissue')
 
 
@@ -239,6 +245,9 @@ class Createissue(Command):
 
 
 class Editissue(Command):
+	"""
+	* Edit existing issue
+	"""
 	log = logging.getLogger(__name__ + '.Editissue')
 
 
@@ -323,6 +332,9 @@ class Editissue(Command):
 
 
 class Deleteissue(Command):
+	"""
+	* Delete issue
+	"""
 	log = logging.getLogger(__name__ + '.Deleteissue')
 
 
@@ -348,6 +360,9 @@ class Deleteissue(Command):
 
 
 class Getcomment(Command):
+	"""
+	* Get all comments for issue
+	"""
 	log = logging.getLogger(__name__ + '.Getcomment')
 
 	def get_parser(self, prog_name):
@@ -382,6 +397,9 @@ class Getcomment(Command):
 
 
 class Postcomment(Command):
+	"""
+	* Add new comment for issue
+	"""
 	log = logging.getLogger(__name__ + '.Postcomment')
 
 	def get_parser(self, prog_name):

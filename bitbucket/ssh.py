@@ -35,6 +35,10 @@ passwd = creds.passwd
 
 
 class Sshkeyget(Command):
+	"""
+	* Get list of all ssh keys associated with users account
+	* Get ssh key from ssh key id
+	"""
 	log = logging.getLogger(__name__ + '.Sshkeyget')
 
 	def get_parser(self, prog_name):
@@ -75,6 +79,9 @@ class Sshkeyget(Command):
 
 
 class Sshkeypost(Command):
+	"""
+	* Add new ssh key to users account
+	"""
 	log = logging.getLogger(__name__ + '.Sshkeypost')
 
 	def get_parser(self, prog_name):
@@ -109,6 +116,9 @@ class Sshkeypost(Command):
 
 
 class Sshkeydelete(Command):
+	"""
+	* Delete ssh key from account
+	"""
 	log = logging.getLogger(__name__ + '.Sshkeydelete')
 
 	def get_parser(self, prog_name):

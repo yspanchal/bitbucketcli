@@ -34,6 +34,9 @@ passwd = creds.passwd
 
 
 class Wikiget(Command):
+	"""
+	* Get wiki page created for repository
+	"""
 	log = logging.getLogger(__name__ + '.Wikiget')
 			
 	def get_parser(self, prog_name):
@@ -59,6 +62,9 @@ class Wikiget(Command):
 
 
 class Wikipost(Command):
+	"""
+	* Post new wiki page for repositorys
+	"""
 	log = logging.getLogger(__name__ + '.Wikipost')
 			
 	def get_parser(self, prog_name):

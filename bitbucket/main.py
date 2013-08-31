@@ -14,6 +14,8 @@
    # limitations under the License.
 
 
+"""Command-line interface to the BitBucket."""
+
 import os
 import sys
 import json
@@ -27,6 +29,9 @@ from cliff.commandmanager import CommandManager
 
 
 class BitBucketApp(App):
+    """
+    * BitBucket global app
+    """ 
 
     log = logging.getLogger(__name__)
 
@@ -38,6 +43,9 @@ class BitBucketApp(App):
             )
 
     def auth(self):
+        """
+        * Make sure user is authenticated before executing any command
+        """
         home = expanduser("~")
         filename = os.path.join(home, '.bitbucket.py')
         if not os.path.exists(filename):
@@ -71,6 +79,9 @@ class BitBucketApp(App):
             pass
 
     def initialize_app(self, argv):
+        """
+        * Initialize bitbucket app 
+        """
         self.log.debug('initialize_app')
         command_name = None
         if argv:

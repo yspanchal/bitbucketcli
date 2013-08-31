@@ -34,6 +34,9 @@ passwd = creds.passwd
 
 
 class Groups(Command):
+	"""
+	* Get list groups & respective members
+	"""
 	log = logging.getLogger(__name__ + '.Groups')
 
 	def get_parser(self, prog_name):
@@ -66,6 +69,9 @@ class Groups(Command):
 
 
 class Creategroup(Command):
+	"""
+	* Create new group
+	"""
 	log = logging.getLogger(__name__ + '.Creategroup')
 
 	def get_parser(self, prog_name):
@@ -106,6 +112,9 @@ class Creategroup(Command):
 
 
 class Deletegroup(Command):
+	"""
+	* Delete existing group
+	"""
 	log = logging.getLogger(__name__ + '.Deletegroup')
 
 	def get_parser(self, prog_name):
@@ -129,6 +138,9 @@ class Deletegroup(Command):
 
 
 class Groupmembers(Command):
+	"""
+	* Get members for group
+	"""
 	log = logging.getLogger(__name__ + '.Groupmembers')
 
 	def get_parser(self, prog_name):
@@ -156,6 +168,9 @@ class Groupmembers(Command):
 
 
 class Addgroupmember(Command):
+	"""
+	* Add new member in group
+	"""
 	log = logging.getLogger(__name__ + '.Addgroupmember')
 
 	def get_parser(self, prog_name):
@@ -184,6 +199,9 @@ class Addgroupmember(Command):
 
 
 class Deletegroupmember(Command):
+	"""
+	* Delete member from group
+	"""
 	log = logging.getLogger(__name__ + '.Deletegroupmember')
 
 	def get_parser(self, prog_name):

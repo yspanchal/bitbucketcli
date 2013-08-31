@@ -34,6 +34,9 @@ passwd = creds.passwd
 
 
 class Changesetget(Command):
+	"""
+	* Get list of changeset
+	"""
 	log = logging.getLogger(__name__ + '.Changesetget')
 			
 	def get_parser(self, prog_name):
@@ -75,6 +78,9 @@ class Changesetget(Command):
 
 
 class Commitget(Command):
+	"""
+	* Get commit details from commit id
+	"""
 	log = logging.getLogger(__name__ + '.Commitget')
 			
 	def get_parser(self, prog_name):
@@ -111,6 +117,9 @@ class Commitget(Command):
 
 
 class Changesetcommentsget(Command):
+	"""
+	* Get comments for changeset
+	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentsget')
 
 	def get_parser(self, prog_name):
@@ -151,6 +160,9 @@ class Changesetcommentsget(Command):
 
 
 class Changesetcommentpost(Command):
+	"""
+	* Add new comment for changeset
+	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentpost')
 
 	def get_parser(self, prog_name):
@@ -186,6 +198,9 @@ class Changesetcommentpost(Command):
 
 
 class Changesetcommentdelete(Command):
+	"""
+	* Delete comment for changeset
+	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentdelete')
 
 	def get_parser(self, prog_name):

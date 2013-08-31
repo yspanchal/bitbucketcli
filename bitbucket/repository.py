@@ -35,6 +35,9 @@ passwd = creds.passwd
 
 
 class Repocreate(ShowOne):
+	"""
+	* Create new repository
+	"""
 	log = logging.getLogger(__name__ + '.Repocreate')
 
 	def get_parser(self, prog_name):
@@ -89,6 +92,9 @@ class Repocreate(ShowOne):
 
 
 class Repoedit(ShowOne):
+	"""
+	* Edit existing repository information, add issues & wiki modules to repository 
+	"""
 	log = logging.getLogger(__name__ + '.Repoedit')
 
 	def get_parser(self, prog_name):
@@ -141,6 +147,9 @@ class Repoedit(ShowOne):
 
 
 class Repodelete(Command):
+	"""
+	* Delete existing repository
+	"""
 	log = logging.getLogger(__name__ + '.Repodelete')
 
 	def get_parser(self, prog_name):
@@ -162,6 +171,9 @@ class Repodelete(Command):
 
 
 class Repolist(Lister):
+	"""
+	* List all repository associated with users account 
+	"""
 	log = logging.getLogger(__name__ + '.Repolist')
 
 	def take_action(self, parsed_args):
@@ -174,6 +186,9 @@ class Repolist(Lister):
 			)
 
 class Repodetail(ShowOne):
+	"""
+	* Provide individual repository details
+	"""
 	log = logging.getLogger(__name__ + '.Repodetail')
 
 	def get_parser(self, prog_name):
@@ -197,6 +212,9 @@ class Repodetail(ShowOne):
 		sys.exit(1)
 
 class Repotag(Command):
+	"""
+	* Returns repository tags
+	"""
 	log = logging.getLogger(__name__ + '.Repotag')
 			
 	def get_parser(self, prog_name):
@@ -230,6 +248,9 @@ class Repotag(Command):
 
 
 class Repobranch(Command):
+	"""
+	* Returns repository branches
+	"""
 	log = logging.getLogger(__name__ + '.Repobranch')
 			
 	def get_parser(self, prog_name):
@@ -263,6 +284,9 @@ class Repobranch(Command):
 
 
 class Repodeploykeysget(Command):
+	"""
+	* Get list of repository deployment keys
+	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysget')
 			
 	def get_parser(self, prog_name):
@@ -294,6 +318,9 @@ class Repodeploykeysget(Command):
 			sys.exit(1)
 
 class Repodeploykeyspost(Command):
+	"""
+	* Add new repository deployment key
+	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeyspost')
 			
 	def get_parser(self, prog_name):
@@ -334,6 +361,9 @@ class Repodeploykeyspost(Command):
 
 
 class Repodeploykeysedit(Command):
+	"""
+	* Edit existing repository deployment key
+	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysedit')
 			
 	def get_parser(self, prog_name):
@@ -375,6 +405,9 @@ class Repodeploykeysedit(Command):
 
 
 class Repodeploykeysdelete(Command):
+	"""
+	* Delete existing repository deployment key
+	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysdelete')
 			
 	def get_parser(self, prog_name):
@@ -399,6 +432,9 @@ class Repodeploykeysdelete(Command):
 
 
 class Repofork(ShowOne):
+	"""
+	Fork repository
+	"""
 	log = logging.getLogger(__name__ + '.Repofork')
 			
 	def get_parser(self, prog_name):
@@ -446,6 +482,9 @@ class Repofork(ShowOne):
 
 
 class Reporevision(Command):
+	"""
+	* Returns repository revision details
+	"""
 	log = logging.getLogger(__name__ + '.Reporevision')
 			
 	def get_parser(self, prog_name):
@@ -488,6 +527,9 @@ class Reporevision(Command):
 
 
 class Reposharepost(Command):
+	"""
+	* Share repository with other users
+	"""
 	log = logging.getLogger(__name__ + '.Reposharepost')
 			
 	def get_parser(self, prog_name):
@@ -519,6 +561,9 @@ class Reposharepost(Command):
 
 
 class Reposhareget(Command):
+	"""
+	* Get list of users repository shared with
+	"""
 	log = logging.getLogger(__name__ + '.Reposhareget')
 			
 	def get_parser(self, prog_name):
@@ -547,6 +592,9 @@ class Reposhareget(Command):
 
 
 class Reposharedelete(Command):
+	"""
+	* Remove users access to repository
+	"""
 	log = logging.getLogger(__name__ + '.Reposharedelete')
 			
 	def get_parser(self, prog_name):

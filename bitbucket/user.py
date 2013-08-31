@@ -31,6 +31,9 @@ user = creds.username
 passwd = creds.passwd
 
 class User(ShowOne):
+	"""
+	* Returns logged in user information
+	"""
 	log = logging.getLogger(__name__ + '.User')
 
 	def take_action(self, parsed_args):
@@ -46,6 +49,9 @@ class User(ShowOne):
 		return (columns, data)
 
 class Userprivileges(ShowOne):
+	"""
+	* Returns logged in user privileges
+	"""
 	log = logging.getLogger(__name__ + '.User')
 
 	def take_action(self, parsed_args):

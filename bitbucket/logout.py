@@ -22,6 +22,10 @@ from cliff.command import Command
 
 
 class Logout(Command):
+   """
+   * Logout user & remove saved credentials
+   """
+
 	log = logging.getLogger(__name__ + '.Logout')
 
 	def take_action(self):
