@@ -16,14 +16,18 @@
 
 import os
 import sys
+import csv
 import json
 import imp
+import urllib
+import tablib
 import argparse
 import logging
 import requests
 import prettytable
 from os.path import expanduser
 from cliff.command import Command
+from cliff.show import ShowOne
 
 
 home = expanduser("~")
@@ -33,7 +37,7 @@ user = creds.username
 passwd = creds.passwd
 
 
-class Getissue(Command):
+class Getissue(ShowOne):
 	"""
 	* Get list of issues
 	"""
@@ -43,6 +47,7 @@ class Getissue(Command):
 		parser = super(Getissue, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
 		parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+		parser.add_argument('--limit', '-l', metavar='<issue limit>', type=int, help='The number of issue to get, you can choose 0-50, default is 15')
 		parser.add_argument('--status', '-s', metavar='<issue status>', choices=['new', 'open', 'resolved', 'on hold', 'invalid', 'duplicate', 'wontfix'], required=False, help='The list of issues sort by  status')
 		parser.add_argument('--kind', '-k', metavar='<kind>', choices=['bug', 'enhancement', 'proposal', 'task'], required=False, help='The list of issues sort by kind')
 		parser.add_argument('--priority', '-p', metavar='<priority>', choices=['trivial', 'minor', 'major', 'critical', 'blocker'], required=False, help='The list of issues sort by priority')
@@ -51,6 +56,7 @@ class Getissue(Command):
 		parser.add_argument('--search', '-S', metavar='<search string>', required=False, help='Search issues based on search string')
 		parser.add_argument('--id', '-i', metavar='<issue_id>', type=int, required=False, help='Get issue details from issue id')
 		parser.add_argument('--followers', '-F', action='store_true', required=False, help='Get follower details from issue id')
+		parser.add_argument('--export', '-x', action='store_true', help='Export as CSV [Note:Does not work with issue detail & issue followers]')
 		return parser	
 
 	def take_action(self, parsed_args):
@@ -59,6 +65,9 @@ class Getissue(Command):
 		args = {}
 		args_id = {}
 		args_followers = {}
+
+		if parsed_args.limit:
+			args['limit'] = parsed_args.limit
 
 		if parsed_args.status:
 			args['status'] = parsed_args.status
@@ -116,10 +125,93 @@ class Getissue(Command):
 			sys.exit(1)
 		
 		if issuelist_url != {} and issuedetail_url == {} and issuefilter_url == {} and issuefollowers_url == {}:
-			print "\nTotal Issues: %s\n" % (data['count'])
-			for i in data['issues']:
-				print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" %(i['local_id'],i['status'],i['title'])
-			sys.exit(0)	
+			if parsed_args.export:
+				csvdata = tablib.Dataset()
+				csvdata.headers = ["ID", "Status", "Kind", "Priority", "Version", "Component", "Milestone", "Reported By", "Created On", "Last Updated", "Responsible", "Comment Count", "is_spam", "Followers Count"]
+				
+				with open('issues.xls', 'wb') as f:
+					for i in data['issues']:
+						row = []
+						if i.has_key('local_id'):
+							row.append(i['local_id'])
+						else:
+							row.append('None')
+
+						if i.has_key('status'):
+							row.append(i['status'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['kind'])
+						else:
+							row.append('None')
+
+						if i.has_key('priority'):
+							row.append(i['priority'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['version'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['component'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['milestone'])
+						else:
+							row.append('None')
+
+						if i.has_key('reported_by'):
+							row.append(i['reported_by']['username'])
+						else:
+							row.append('None')
+
+						if i.has_key('utc_created_on'):
+							row.append(i['utc_created_on'])
+						else:
+							row.append('None')
+
+						if i.has_key('utc_last_updated'):
+							row.append(i['utc_last_updated'])
+						else:
+							row.append('None')
+
+						if i.has_key('responsible'):
+							row.append(i['responsible']['username'])
+						else:
+							row.append('None')
+
+						if i.has_key('comment_count'):
+							row.append(i['comment_count'])
+						else:
+							row.append('None')
+
+						if i.has_key('is_spam'):
+							row.append(i['is_spam'])
+						else:
+							row.append('None')
+
+						if i.has_key('follower_count'):
+							row.append(i['follower_count'])
+						else:
+							row.append('None')
+
+						csvdata.append(row)
+					f.write(csvdata.csv)
+					f.close()
+					print "\n CSV File created.\n"
+					sys.exit(0)
+			else:
+				print "\nTotal Issues: %s\n" % (data['count'])
+				for i in data['issues']:
+					print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" %(i['local_id'],i['status'],i['title'])
+		    	sys.exit(0)	
 		elif issuedetail_url != {} and issuelist_url == {} and issuefilter_url == {} and issuefollowers_url == {}:
 			newdata = {}
 			newdata['issue id'] = data['local_id']
@@ -143,10 +235,103 @@ class Getissue(Command):
 			print "Content: %s\n" % (data['content'])
 			return (columns, columndata)
 		elif issuefilter_url != {} and issuelist_url == {} and issuedetail_url == {} and issuefollowers_url == {}:
-			print "\nTotal Issues: %s\n" % (data['count'])
-			for i in data['issues']:
-				print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" %(i['local_id'],i['status'],i['title'])
-			sys.exit(0)
+			if parsed_args.export:
+				csvdata = tablib.Dataset()
+				csvdata.headers = ["ID", "Status", "Kind", "Priority", "Version", "Component", "Milestone", "Reported By", "Created On", "Last Updated", "Responsible", "Title", "Content", "Comment Count", "is_spam", "Followers Count"]
+				
+				with open('issues.xls', 'wb') as f:
+					for i in data['issues']:
+						row = []
+						if i.has_key('local_id'):
+							row.append(i['local_id'])
+						else:
+							row.append('None')
+
+						if i.has_key('status'):
+							row.append(i['status'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['kind'])
+						else:
+							row.append('None')
+
+						if i.has_key('priority'):
+							row.append(i['priority'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['version'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['component'])
+						else:
+							row.append('None')
+
+						if i.has_key('metadata'):
+							row.append(i['metadata']['milestone'])
+						else:
+							row.append('None')
+
+						if i.has_key('reported_by'):
+							row.append(i['reported_by']['username'])
+						else:
+							row.append('None')
+
+						if i.has_key('utc_created_on'):
+							row.append(i['utc_created_on'])
+						else:
+							row.append('None')
+
+						if i.has_key('utc_last_updated'):
+							row.append(i['utc_last_updated'])
+						else:
+							row.append('None')
+
+						if i.has_key('responsible'):
+							row.append(i['responsible']['username'])
+						else:
+							row.append('None')
+
+						if i.has_key('title'):
+							row.append(i['title'])
+						else:
+							row.append('None')
+
+						if i.has_key('content'):
+							row.append(i['content'])
+						else:
+							row.append('None')
+
+						if i.has_key('comment_count'):
+							row.append(i['comment_count'])
+						else:
+							row.append('None')
+
+						if i.has_key('is_spam'):
+							row.append(i['is_spam'])
+						else:
+							row.append('None')
+
+						if i.has_key('follower_count'):
+							row.append(i['follower_count'])
+						else:
+							row.append('None')
+
+						csvdata.append(row)
+					f.write(csvdata.csv)
+					f.close()
+					print "\n CSV File created.\n"
+				sys.exit(0)
+			else:
+				print "\nTotal Issues: %s\n" % (data['count'])
+				for i in data['issues']:
+					print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" %(i['local_id'],i['status'],i['title'])
+				sys.exit(0)
 		elif issuefollowers_url != {} and issuelist_url == {} and issuedetail_url == {} and issuefilter_url == {}:
 			print "\nFollowers Count: %s\n" %(data['count'])
 			for i in data['followers']:
@@ -158,7 +343,7 @@ class Getissue(Command):
 			sys.exit(1)
 
 
-class Createissue(Command):
+class Createissue(ShowOne):
 	"""
 	* Create new issue
 	"""
@@ -244,7 +429,7 @@ class Createissue(Command):
 			sys.exit(1)
 
 
-class Editissue(Command):
+class Editissue(ShowOne):
 	"""
 	* Edit existing issue
 	"""

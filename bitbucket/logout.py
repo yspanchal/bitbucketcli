@@ -27,11 +27,8 @@ class Logout(Command):
    """
    log = logging.getLogger(__name__ + '.Logout')
 
-   def take_action(self):
-		self.log.debug('take_action()')
-
-		home = expanduser("~")
-		filename = os.path.join(home, '.bitbucket.py')
-		os.remove(filename)
-		if not filename:
-			print "\n Logout Successfully\n\n"
+   def take_action(self, parsed_args):
+      home = expanduser("~")
+      filename = os.path.join(home, '.bitbucket.py')
+      os.remove(filename)
+      print "\n Logout Successfully\n\n"

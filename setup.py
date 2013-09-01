@@ -65,7 +65,7 @@ setup(
     scripts=[],
 
     provides=[],
-    install_requires=['distribute', 'cliff'],
+    install_requires=['distribute', 'cliff', 'tablib'],
 
     namespace_packages=[],
     packages=find_packages(),
