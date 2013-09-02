@@ -45,27 +45,30 @@ class Login(Command):
 
          p1 = getpass.getpass('Enter Password: ')
          p2 = getpass.getpass('Enter Password (Again): ')
+
          if p1 != p2:
-            print "Password do not match. Try Again.\n"
+            print "\n Password do not match. Try Again\n"
             sys.exit(1)
          else:
             passwd = p1
+
          r = requests.get(url, auth=(user, passwd))
          status = r.status_code
-         if status != 200:
-            print "Authentication Error. Invalid Username or Password.\n"
-            sys.exit(1)
-         else:
+
+         if status == 200:
             f = open(filename,'w')
             f.write("username = " + "'" + user + "'" + "\n")
             f.write("passwd = " + "'" + p1 + "'" + "\n")
-            print("Login Successful.\n")
+            print("Login Successful.")
             data = json.loads(r.text)
-            print "Username: " + data['user']['username']
+            print "\nUsername: " + data['user']['username']
             print "Display Name: " + data['user']['display_name']
             sys.exit(0)
+         else:
+            print "\n Authentication Error. Invalid Username or Password\n"
+            sys.exit(1)
       else:
-         print "\n You are already logged in\n"
+         print "\n You are logged in\n"
          sys.exit(0)
 
 
