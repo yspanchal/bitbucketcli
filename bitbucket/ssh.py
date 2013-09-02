@@ -44,6 +44,8 @@ class Sshkeyget(Command):
 	* Get ssh key from ssh key id
 	"""
 	log = logging.getLogger(__name__ + '.Sshkeyget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Sshkeyget, self).get_parser(prog_name)
@@ -87,6 +89,8 @@ class Sshkeypost(Command):
 	* Add new ssh key to users account
 	"""
 	log = logging.getLogger(__name__ + '.Sshkeypost')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Sshkeypost, self).get_parser(prog_name)
@@ -124,6 +128,8 @@ class Sshkeydelete(Command):
 	* Delete ssh key from account
 	"""
 	log = logging.getLogger(__name__ + '.Sshkeydelete')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Sshkeydelete, self).get_parser(prog_name)

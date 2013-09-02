@@ -62,6 +62,8 @@ class BitBucketApp(App):
                 sys.exit(1)
             else:
                 passwd = p1
+            requests_log = logging.getLogger("requests")
+            requests_log.setLevel(logging.WARNING)    
             r = requests.get(url, auth=(user, passwd))
             status = r.status_code
             if status != 200:

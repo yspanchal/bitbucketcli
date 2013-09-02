@@ -41,6 +41,8 @@ class Changesetget(Command):
 	* Get list of changeset
 	"""
 	log = logging.getLogger(__name__ + '.Changesetget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Changesetget, self).get_parser(prog_name)
@@ -85,6 +87,8 @@ class Commitget(Command):
 	* Get commit details from commit id
 	"""
 	log = logging.getLogger(__name__ + '.Commitget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Commitget, self).get_parser(prog_name)
@@ -124,6 +128,8 @@ class Changesetcommentsget(Command):
 	* Get comments for changeset
 	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentsget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Changesetcommentsget, self).get_parser(prog_name)
@@ -167,6 +173,8 @@ class Changesetcommentpost(Command):
 	* Add new comment for changeset
 	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentpost')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Changesetcommentpost, self).get_parser(prog_name)
@@ -205,6 +213,8 @@ class Changesetcommentdelete(Command):
 	* Delete comment for changeset
 	"""
 	log = logging.getLogger(__name__ + '.Changesetcommentdelete')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Changesetcommentdelete, self).get_parser(prog_name)

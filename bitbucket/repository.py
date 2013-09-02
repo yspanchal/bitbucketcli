@@ -43,6 +43,8 @@ class Repocreate(ShowOne):
 	* Create new repository
 	"""
 	log = logging.getLogger(__name__ + '.Repocreate')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Repocreate, self).get_parser(prog_name)
@@ -100,6 +102,8 @@ class Repoedit(ShowOne):
 	* Edit existing repository information, add issues & wiki modules to repository 
 	"""
 	log = logging.getLogger(__name__ + '.Repoedit')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Repoedit, self).get_parser(prog_name)
@@ -155,6 +159,8 @@ class Repodelete(Command):
 	* Delete existing repository
 	"""
 	log = logging.getLogger(__name__ + '.Repodelete')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Repodelete, self).get_parser(prog_name)
@@ -179,6 +185,8 @@ class Repolist(Lister):
 	* List all repository associated with users account 
 	"""
 	log = logging.getLogger(__name__ + '.Repolist')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def take_action(self, parsed_args):
 		self.log.debug('take_action(%s)' % parsed_args)
@@ -194,6 +202,8 @@ class Repodetail(ShowOne):
 	* Provide individual repository details
 	"""
 	log = logging.getLogger(__name__ + '.Repodetail')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Repodetail, self).get_parser(prog_name)
@@ -220,6 +230,8 @@ class Repotag(Command):
 	* Returns repository tags
 	"""
 	log = logging.getLogger(__name__ + '.Repotag')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repotag, self).get_parser(prog_name)
@@ -256,6 +268,8 @@ class Repobranch(Command):
 	* Returns repository branches
 	"""
 	log = logging.getLogger(__name__ + '.Repobranch')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repobranch, self).get_parser(prog_name)
@@ -292,6 +306,8 @@ class Repodeploykeysget(Command):
 	* Get list of repository deployment keys
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysget, self).get_parser(prog_name)
@@ -326,6 +342,8 @@ class Repodeploykeyspost(Command):
 	* Add new repository deployment key
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeyspost')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeyspost, self).get_parser(prog_name)
@@ -369,6 +387,8 @@ class Repodeploykeysedit(Command):
 	* Edit existing repository deployment key
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysedit')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysedit, self).get_parser(prog_name)
@@ -413,6 +433,8 @@ class Repodeploykeysdelete(Command):
 	* Delete existing repository deployment key
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysdelete')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysdelete, self).get_parser(prog_name)
@@ -440,6 +462,8 @@ class Repofork(ShowOne):
 	* Fork repository
 	"""
 	log = logging.getLogger(__name__ + '.Repofork')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Repofork, self).get_parser(prog_name)
@@ -490,6 +514,8 @@ class Reporevision(Command):
 	* Returns repository revision details
 	"""
 	log = logging.getLogger(__name__ + '.Reporevision')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Reporevision, self).get_parser(prog_name)
@@ -535,6 +561,8 @@ class Reposharepost(Command):
 	* Share repository with other users
 	"""
 	log = logging.getLogger(__name__ + '.Reposharepost')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Reposharepost, self).get_parser(prog_name)
@@ -569,6 +597,8 @@ class Reposhareget(Command):
 	* Get list of users repository shared with
 	"""
 	log = logging.getLogger(__name__ + '.Reposhareget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Reposhareget, self).get_parser(prog_name)
@@ -600,6 +630,8 @@ class Reposharedelete(Command):
 	* Remove users access to repository
 	"""
 	log = logging.getLogger(__name__ + '.Reposharedelete')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Reposharedelete, self).get_parser(prog_name)

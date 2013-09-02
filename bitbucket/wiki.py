@@ -42,6 +42,8 @@ class Wikiget(Command):
 	* Get wiki page created for repository
 	"""
 	log = logging.getLogger(__name__ + '.Wikiget')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Wikiget, self).get_parser(prog_name)
@@ -70,6 +72,8 @@ class Wikipost(Command):
 	* Post new wiki page for repositorys
 	"""
 	log = logging.getLogger(__name__ + '.Wikipost')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 			
 	def get_parser(self, prog_name):
 		parser = super(Wikipost, self).get_parser(prog_name)

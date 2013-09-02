@@ -34,6 +34,8 @@ class Login(Command):
    * Login to bitbucket account
    """
    log = logging.getLogger(__name__ + '.Login')
+   requests_log = logging.getLogger("requests")
+   requests_log.setLevel(logging.WARNING)   
 
    def take_action(self, parsed_args):
       if not os.path.exists(filename):
@@ -77,6 +79,8 @@ class Logout(Command):
    * Logout user & remove saved credentials
    """
    log = logging.getLogger(__name__ + '.Logout')
+   requests_log = logging.getLogger("requests")
+   requests_log.setLevel(logging.WARNING)   
 
    def take_action(self, parsed_args):
       home = expanduser("~")

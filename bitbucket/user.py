@@ -39,6 +39,8 @@ class User(ShowOne):
 	* Returns logged in user information
 	"""
 	log = logging.getLogger(__name__ + '.User')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def take_action(self, parsed_args):
 		self.log.debug('take_action(%s)' % parsed_args)
@@ -57,6 +59,8 @@ class Userprivileges(ShowOne):
 	* Returns logged in user privileges
 	"""
 	log = logging.getLogger(__name__ + '.User')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def take_action(self, parsed_args):
 		self.log.debug('take_action(%s)' % parsed_args)

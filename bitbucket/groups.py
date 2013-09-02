@@ -42,6 +42,8 @@ class Groups(Command):
 	* Get list groups & respective members
 	"""
 	log = logging.getLogger(__name__ + '.Groups')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Groups, self).get_parser(prog_name)
@@ -77,6 +79,8 @@ class Creategroup(Command):
 	* Create new group
 	"""
 	log = logging.getLogger(__name__ + '.Creategroup')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Creategroup, self).get_parser(prog_name)
@@ -120,6 +124,8 @@ class Deletegroup(Command):
 	* Delete existing group
 	"""
 	log = logging.getLogger(__name__ + '.Deletegroup')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Deletegroup, self).get_parser(prog_name)
@@ -146,6 +152,8 @@ class Groupmembers(Command):
 	* Get members for group
 	"""
 	log = logging.getLogger(__name__ + '.Groupmembers')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Groupmembers, self).get_parser(prog_name)
@@ -176,6 +184,8 @@ class Addgroupmember(Command):
 	* Add new member in group
 	"""
 	log = logging.getLogger(__name__ + '.Addgroupmember')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Addgroupmember, self).get_parser(prog_name)
@@ -207,6 +217,8 @@ class Deletegroupmember(Command):
 	* Delete member from group
 	"""
 	log = logging.getLogger(__name__ + '.Deletegroupmember')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Deletegroupmember, self).get_parser(prog_name)

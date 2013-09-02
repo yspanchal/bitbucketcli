@@ -44,6 +44,8 @@ class Getissue(ShowOne):
 	* Get list of issues
 	"""
 	log = logging.getLogger(__name__ + '.Getissue')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Getissue, self).get_parser(prog_name)
@@ -350,7 +352,8 @@ class Createissue(ShowOne):
 	* Create new issue
 	"""
 	log = logging.getLogger(__name__ + '.Createissue')
-
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Createissue, self).get_parser(prog_name)
@@ -436,7 +439,8 @@ class Editissue(ShowOne):
 	* Edit existing issue
 	"""
 	log = logging.getLogger(__name__ + '.Editissue')
-
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Editissue, self).get_parser(prog_name)
@@ -523,7 +527,8 @@ class Deleteissue(Command):
 	* Delete issue
 	"""
 	log = logging.getLogger(__name__ + '.Deleteissue')
-
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Deleteissue, self).get_parser(prog_name)
@@ -551,6 +556,8 @@ class Getcomment(Command):
 	* Get all comments for issue
 	"""
 	log = logging.getLogger(__name__ + '.Getcomment')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Getcomment, self).get_parser(prog_name)
@@ -588,6 +595,8 @@ class Postcomment(Command):
 	* Add new comment for issue
 	"""
 	log = logging.getLogger(__name__ + '.Postcomment')
+	requests_log = logging.getLogger("requests")
+	requests_log.setLevel(logging.WARNING)	
 
 	def get_parser(self, prog_name):
 		parser = super(Postcomment, self).get_parser(prog_name)
