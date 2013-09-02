@@ -26,11 +26,15 @@ from os.path import expanduser
 from cliff.command import Command
 
 
-home = expanduser("~")
-filename = os.path.join(home, '.bitbucket.py')
-creds = imp.load_source('.bitbucket', filename)
-user = creds.username
-passwd = creds.passwd
+try:
+	home = expanduser("~")
+	filename = os.path.join(home, '.bitbucket.py')
+	creds = imp.load_source('.bitbucket', filename)
+	user = creds.username
+	passwd = creds.passwd
+except (IOError, NameError):
+	pass
+
 
 
 class Groups(Command):
