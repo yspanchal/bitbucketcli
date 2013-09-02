@@ -1,15 +1,13 @@
-bitbucket
-=========
 
-=======================================
-Command Line interface to bitbucket.org
-=======================================
+===================================================
+"bitbucket" Command Line interface to bitbucket.org
+===================================================
 
 "bitbucket" is command line tool written in python-cliff.
 
 
 Installation: 
-=============
+-------------
 
 git clone https://github.com/yspanchal/bitbucket.git
 
@@ -19,7 +17,7 @@ python setup.py install
 
 
 Usage: 
-======
+------
 bitbucket --help
 
 extra command help
