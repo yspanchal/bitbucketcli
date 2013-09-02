@@ -17,7 +17,6 @@
 
 PROJECT = 'Bitbucket Command Line Tool'
 
-# Change docs/sphinx/conf.py too!
 VERSION = '0.1'
 
 # Bootstrap installation of Distribute
@@ -65,7 +64,7 @@ setup(
     scripts=[],
 
     provides=[],
-    install_requires=['distribute', 'cliff', 'tablib'],
+    install_requires=['distribute', 'cliff', 'tablib', 'requests'],
 
     namespace_packages=[],
     packages=find_packages(),
@@ -78,20 +77,21 @@ setup(
         'cliff.bitbucket': [
             'commit_detail = bitbucket.changeset:Commitget',
             'commit_comments = bitbucket.changeset:Changesetcommentsget',
-            'commit_comments_post = bitbucket.changeset:Changesetcommentpost',
-            'commit_comments_delete = bitbucket.changeset:Changesetcommentdelete',
+            'commit_comments-post = bitbucket.changeset:Changesetcommentpost',
+            'commit_comments-delete = bitbucket.changeset:Changesetcommentdelete',
             'groups = bitbucket.groups:Groups',
             'group_create = bitbucket.groups:Creategroup',
             'group_delete = bitbucket.groups:Deletegroup',
             'group_members = bitbucket.groups:Groupmembers',
-            'group_member_add = bitbucket.groups:Addgroupmember',
-            'group_member_delete = bitbucket.groups:Deletegroupmember',
+            'group_member-add = bitbucket.groups:Addgroupmember',
+            'group_member-delete = bitbucket.groups:Deletegroupmember',
             'issue = bitbucket.issues:Getissue',
             'issue_create = bitbucket.issues:Createissue',
             'issue_edit = bitbucket.issues:Editissue',
             'issue_delete = bitbucket.issues:Deleteissue',
             'issue_getcomment = bitbucket.issues:Getcomment',
             'issue_postcomment = bitbucket.issues:Postcomment',
+            'login = bitbucket.logout:Login',
             'logout = bitbucket.logout:Logout',
             'repo_changeset = bitbucket.changeset:Changesetget',
             'repo_create = bitbucket.repository:Repocreate',
@@ -102,14 +102,14 @@ setup(
             'repo_tag = bitbucket.repository:Repotag',
             'repo_branch = bitbucket.repository:Repobranch',
             'repo_deploykey = bitbucket.repository:Repodeploykeyspost',
-            'repo_deploykey_list = bitbucket.repository:Repodeploykeysget',
-            'repo_deploykey_edit = bitbucket.repository:Repodeploykeysedit',
-            'repo_deploykey_delete = bitbucket.repository:Repodeploykeysdelete',
+            'repo_deploykey-list = bitbucket.repository:Repodeploykeysget',
+            'repo_deploykey-edit = bitbucket.repository:Repodeploykeysedit',
+            'repo_deploykey-delete = bitbucket.repository:Repodeploykeysdelete',
             'repo_fork = bitbucket.repository:Repofork',
             'repo_revision = bitbucket.repository:Reporevision',
             'repo_share = bitbucket.repository:Reposhareget',
-            'repo_share_with = bitbucket.repository:Reposharepost',
-            'repo_share_remove = bitbucket.repository:Reposharedelete',
+            'repo_share-with = bitbucket.repository:Reposharepost',
+            'repo_share-remove = bitbucket.repository:Reposharedelete',
             'sshkey = bitbucket.ssh:Sshkeyget',
             'sshkey_add = bitbucket.ssh:Sshkeypost',
             'sshkey_delete = bitbucket.ssh:Sshkeydelete',

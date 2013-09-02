@@ -56,7 +56,7 @@ class BitBucketApp(App):
                 user = getpass.getuser()
 
             p1 = getpass.getpass('Enter Password: ')
-            p2 = getpass.getpass('Retype Password: ')
+            p2 = getpass.getpass('Enter Password (Again): ')
             if p1 != p2:
                 print "Password do not match. Try Again.\n"
                 sys.exit(1)
@@ -88,7 +88,8 @@ class BitBucketApp(App):
             cmd_info = self.command_manager.find_command(argv)
             cmd_factory, cmd_name, sub_argv = cmd_info
         if self.interactive_mode or command_name != 'help':
-            self.auth()
+            if self.interactive_mode or command_name != 'login':
+                self.auth()
 
     def prepare_to_run_command(self, cmd):
         self.log.debug('prepare_to_run_command %s', cmd.__class__.__name__)
