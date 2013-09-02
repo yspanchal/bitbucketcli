@@ -1,4 +1,3 @@
-
 ===================================================
 "bitbucket" Command Line interface to bitbucket.org
 ===================================================
@@ -10,8 +9,6 @@ Installation:
 -------------
 
 git clone https://github.com/yspanchal/bitbucket.git
-
-cd bitbucket/
 
 python setup.py install
 
