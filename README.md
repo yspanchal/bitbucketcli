@@ -10,6 +10,8 @@ Installation:
 
 git clone https://github.com/yspanchal/bitbucket.git
 
+cd bitbucket 
+
 python setup.py install
 
 
@@ -23,3 +25,8 @@ bitbucket help command
 
 ex: bitbucket help repo create
  
+
+Example Commands
+----------------
+
+https://github.com/yspanchal/bitbucket/wiki/Example-Commands
