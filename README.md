@@ -30,3 +30,6 @@ Example Commands
 ----------------
 
 https://github.com/yspanchal/bitbucket/wiki/Example-Commands
+
+
+http://pythonhosted.org/bitbucketcli
