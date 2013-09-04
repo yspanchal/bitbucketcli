@@ -15,9 +15,9 @@
    # limitations under the License.
 
 
-PROJECT = 'Bitbucket Command Line Tool'
+PROJECT = 'Bitbucket Command Line Interface'
 
-VERSION = '0.1'
+VERSION = '1.0'
 
 # Bootstrap installation of Distribute
 import distribute_setup
@@ -45,8 +45,8 @@ setup(
     author='Yogesh Panchal',
     author_email='yspanchal@gmail.com',
 
-    url='https://github.com/dreamhost/cliff',
-    download_url='https://github.com/dreamhost/cliff/tarball/master',
+    url='https://github.com/yspanchal/bitbucket',
+    download_url='https://github.com/yspanchal/bitbucket/tarball/master',
 
     classifiers=['Development Status :: 3 - Alpha',
                  'License :: OSI Approved :: Apache Software License',
