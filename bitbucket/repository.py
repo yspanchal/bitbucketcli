@@ -50,6 +50,7 @@ class Repocreate(ShowOne):
 		parser = super(Repocreate, self).get_parser(prog_name)
 		parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
 		parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
+		parser.add_argument('--owner', '-o', metavar='<owner>', help='Repository Owner')
 		parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], required=False, help='repository is private ?')
 		parser.add_argument('--scm', '-s', metavar='<scm>', choices=['git', 'hg'], required=False, help='The repository scm')
 		parser.add_argument('--has_issues', '-i', metavar='<has_issues>', choices=['true', 'false'], required=False, help='The repository has issues ?')
@@ -63,6 +64,9 @@ class Repocreate(ShowOne):
 
 		if parsed_args.reponame:
 			args['name'] = parsed_args.reponame
+		
+		if parsed_args.reponame:
+			args['owner'] = parsed_args.owner
 
 		if parsed_args.description:
 			args['description'] = parsed_args.description
