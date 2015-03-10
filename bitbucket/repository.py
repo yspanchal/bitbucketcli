@@ -20,7 +20,6 @@ import imp
 import json
 import logging
 import requests
-import argparse
 import prettytable
 from os.path import expanduser
 from cliff.command import Command
@@ -44,7 +43,7 @@ class Repocreate(ShowOne):
 	"""
 	log = logging.getLogger(__name__ + '.Repocreate')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Repocreate, self).get_parser(prog_name)
@@ -64,8 +63,8 @@ class Repocreate(ShowOne):
 
 		if parsed_args.reponame:
 			args['name'] = parsed_args.reponame
-		
-		if parsed_args.reponame:
+
+		if parsed_args.owner:
 			args['owner'] = parsed_args.owner
 
 		if parsed_args.description:
@@ -83,7 +82,7 @@ class Repocreate(ShowOne):
 		if parsed_args.has_wiki:
 			args['has_wiki'] = parsed_args.has_wiki
 
-		url = "https://bitbucket.org/api/1.0/repositories"		
+		url = "https://bitbucket.org/api/1.0/repositories"
 		r = requests.post(url, data=args, auth=(user, passwd))
 		if r.status_code == 200:
 			data = json.loads(r.text)
@@ -103,11 +102,11 @@ class Repocreate(ShowOne):
 
 class Repoedit(ShowOne):
 	"""
-	* Edit existing repository information, add issues & wiki modules to repository 
+	* Edit existing repository information, add issues & wiki modules to repository
 	"""
 	log = logging.getLogger(__name__ + '.Repoedit')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Repoedit, self).get_parser(prog_name)
@@ -140,7 +139,7 @@ class Repoedit(ShowOne):
 		if parsed_args.language:
 			args['language'] = parsed_args.language
 
-		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/" % (parsed_args.account,parsed_args.reponame)		
+		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/" % (parsed_args.account,parsed_args.reponame)
 		r = requests.put(url, data=args, auth=(user, passwd))
 		if r.status_code == 200:
 			data = json.loads(r.text)
@@ -164,7 +163,7 @@ class Repodelete(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repodelete')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Repodelete, self).get_parser(prog_name)
@@ -186,7 +185,7 @@ class Repodelete(Command):
 
 class Repolist(Lister):
 	"""
-	* List all repository associated with users account 
+	* List all repository associated with users account
 	"""
 	log = logging.getLogger(__name__ + '.Repolist')
 	requests_log = logging.getLogger("requests")
@@ -207,7 +206,7 @@ class Repodetail(ShowOne):
 	"""
 	log = logging.getLogger(__name__ + '.Repodetail')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
+	requests_log.setLevel(logging.WARNING)
 
 	def get_parser(self, prog_name):
 		parser = super(Repodetail, self).get_parser(prog_name)
@@ -216,7 +215,7 @@ class Repodetail(ShowOne):
 
 	def take_action(self, parsed_args):
 		self.log.debug('take_action(%s)' % parsed_args)
-		url = "https://bitbucket.org/api/1.0/user/repositories/"		
+		url = "https://bitbucket.org/api/1.0/user/repositories/"
 		r = requests.get(url, auth=(user, passwd))
 		data = json.loads(r.text)
 		for i in data:
@@ -235,8 +234,8 @@ class Repotag(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repotag')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repotag, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -273,8 +272,8 @@ class Repobranch(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repobranch')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repobranch, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -311,8 +310,8 @@ class Repodeploykeysget(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysget')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysget, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -347,8 +346,8 @@ class Repodeploykeyspost(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeyspost')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeyspost, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -361,7 +360,7 @@ class Repodeploykeyspost(Command):
 		self.log.debug('take_action(%s)' % parsed_args)
 
 		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (parsed_args.account,parsed_args.reponame)
-		
+
 		args = {}
 
 		if parsed_args.key:
@@ -392,8 +391,8 @@ class Repodeploykeysedit(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysedit')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysedit, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -407,7 +406,7 @@ class Repodeploykeysedit(Command):
 		self.log.debug('take_action(%s)' % parsed_args)
 
 		url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.key_id)
-		
+
 		args = {}
 
 		if parsed_args.key:
@@ -438,8 +437,8 @@ class Repodeploykeysdelete(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Repodeploykeysdelete')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repodeploykeysdelete, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -467,8 +466,8 @@ class Repofork(ShowOne):
 	"""
 	log = logging.getLogger(__name__ + '.Repofork')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Repofork, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -519,8 +518,8 @@ class Reporevision(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Reporevision')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Reporevision, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -566,8 +565,8 @@ class Reposharepost(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Reposharepost')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Reposharepost, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -602,8 +601,8 @@ class Reposhareget(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Reposhareget')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Reposhareget, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
@@ -635,8 +634,8 @@ class Reposharedelete(Command):
 	"""
 	log = logging.getLogger(__name__ + '.Reposharedelete')
 	requests_log = logging.getLogger("requests")
-	requests_log.setLevel(logging.WARNING)	
-			
+	requests_log.setLevel(logging.WARNING)
+
 	def get_parser(self, prog_name):
 		parser = super(Reposharedelete, self).get_parser(prog_name)
 		parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
