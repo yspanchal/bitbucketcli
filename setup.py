@@ -19,10 +19,6 @@ PROJECT = 'Bitbucket Command Line Interface'
 
 VERSION = '1.0'
 
-# Bootstrap installation of Distribute TODO:: remove these lines
-# import distribute_setup
-# distribute_setup.use_setuptools()
-
 from setuptools import setup, find_packages
 
 
