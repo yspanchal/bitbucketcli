@@ -41,8 +41,9 @@ class User(ShowOne):
     requests_log.setLevel(logging.WARNING)
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/")
         r = requests.get(url, auth=(user, passwd))
         jsondata = json.loads(r.text)
         userdata = jsondata['user']
@@ -63,8 +64,10 @@ class Userprivileges(ShowOne):
     requests_log.setLevel(logging.WARNING)
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/privileges/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/"
+               "privileges/")
         r = requests.get(url, auth=(user, passwd))
         jsondata = json.loads(r.text)
         userdata = jsondata['teams']
