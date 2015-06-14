@@ -65,23 +65,26 @@ class Wikiget(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/wiki/%s/" % (
-            parsed_args.
-            account,
-            parsed_args.
-            reponame,
-            parsed_args.
-            page)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "wiki/{a.page}/").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\nMarkup: %s\n" % (data['markup'])
-            print "Revision: %s\n" % (data['rev'])
-            print "Page Content: %s\n" % (data['data'])
+            msg = """
+Markup: {d[markup]}
+
+Revision: {d[rev]}
+
+Page Content: {d[data]}
+
+"""
+            print msg.format(d=data)
         else:
-            print "\n Error: '404' No Wiki Pages Found 'or' Invalid argument supplied.\n"
+            print ("\n Error: '404' No Wiki Pages Found"
+                   " 'or' Invalid argument supplied.\n")
             sys.exit(1)
 
 
@@ -123,21 +126,19 @@ class Wikipost(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a}s)'.format(a=parsed_args))
 
         args = {}
         args['content'] = parsed_args.content
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/wiki/%s/" % (
-            parsed_args.
-            account,
-            parsed_args.
-            reponame,
-            parsed_args.
-            page)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "wiki/{a.page}/").format(a=parsed_args)
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             print "\n Wiki Page Created Successfully.\n"
         else:
-            print "\n Error: '%s' Something Went Wrong -- Bitbucket.\n" % (r.status_code)
+            msg = ("\n Error: '{r.status_code}' "
+                   "Something Went Wrong -- Bitbucket.\n")
+            print msg.format(r=r)
             sys.exit(1)
