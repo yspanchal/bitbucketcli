@@ -1,0 +1,130 @@
+# account name used to log into
+name: vlcinsky
+# password is never configured here, you must do
+# $ bitbucket login
+# before running the test.
+# We do not want to store any credentials in source code
+repos:
+    rhorenov:
+        TTRTest:
+    mholub:
+        salt:      
+        saltedRPi:
+    burespe1:
+        Monitor:
+        TMC Analyser:
+        TTRTest:
+    Vlcek:
+        cviciste01:
+        Sloucenina:
+        TMC Analyser:
+        TMC analyzer installer:
+        Termix:
+        cetraffic.feed.eventservice.json:
+    tamtamresearch:
+        command-wrapper:
+        distribution-platform:
+        FeedHistory:
+        fetchandprocess-v1:
+        fetchandprocess-v1-DFS2TT:
+        jenkins-tests:
+        jingtrang:
+        jsval:
+        rdsgenerator:
+        repo-cet-archiving:
+        repo-cet-doc-advamceddatafusion:
+        repo-cet-gddkia:
+        repo-cet-s3-proxy:
+        repo-ttr-ap-tools:
+        repo-ttr-ap-transmitter:
+        repo-ttr-ap-transmitter-doc:
+        repo-ttr-awslambda:
+        repo-ttr-check_rds_tmc:
+        repo-ttr-datexjson:
+        repo-ttr-dist-platform-flask:
+        repo-ttr-frigo:
+        repo-ttr-grunt:
+        repo-ttr-httpfile:
+        repo-ttr-rds-probe:
+        repo-ttr-rdstmc:
+        repo-ttr-temp-traffic_segments:
+        repo-ttr-tmc-analyser:
+        repo-ttr-web-datexbrowser:
+        repo-ttr-web-ttr:
+        repo-ttr-web-ttr-blog:
+        repo-ttr-web-turbomaps:
+        repo-ttr-web-turbotmc:
+        repo-ttr-xml2json:
+        RPi-image:
+        tmcgen:
+        ttr.aws.utils.s3:
+        ttr.rdsxml2json:
+        turbotmc-jsonizer:
+        turbotmc-rest:
+        turbotmc-spec:
+    tom_t_thal:
+        DATEX Browser:
+        Leaflet SVG:
+        svgmaps:
+    vlcinsky:
+        awsproxy-eval:
+        awsproxy2csv:
+        awss3.cleanup:
+        CE-Traffic/FeedXmlSchemas:
+        CE-Traffic/gds87a.active24.cz-etc-nagios:
+        cetraffic.archiver.dfs:
+        cetraffic.archiver_csv_filter:
+        cetraffic.dfsarchiver.json:
+        cetraffic.feed.common-OBSOLETE:
+        cetraffic.nagios.check.eventrate:
+        cetraffic.transform.tomtomflowdf:
+        dalimil:
+        git-TmcAnalyser:
+        mysqlalchemy-ddr-snapshot:
+        pyshp:
+        regina-fabric:
+        repo-cet-feed-common:
+        repo-cet-feed-eventservice:
+        repo-cet-loctable:
+        repo-cet-map-zakopianka:
+        repo-cet-nagiosplugins:
+        repo-ttr-tmc-analyser:
+        repo-ttr-utcutils:
+        saltedRPi:
+        script_utils:
+        serialToTcpToUdp:
+        sh-fixtureset:
+        sh-jsoncatalogue:
+        sh-swaggerproxy:
+        sh.openapi:
+        sh.openapi-rest:
+        simple-db-logging:
+        test_responses:
+        ttr.ddr_reception:
+        ttr.fileexchange:
+        ttr.run:
+        ttr.studie.tsk2011-DDR:
+        ttr.studie.tsk2011-tmc:
+        ttr.tmc-slovakia:
+        ttr.utcutils-OBSOLETE:
+        ttr.utils.fetchurl:
+        ttr.xml.csv2xml:
+# grous are in tree: groups/{account}/{group_name}/[member_names]
+groups:
+    vlcinsky:
+        TamTam Research:
+            - burespe1
+            - rhorenov
+    tamtamresearch:
+        ttr:
+            - burespe1
+            - rhorenov
+        Developers:
+            - vlcinsky
+            - burespe1
+            - rhorenov
+            - tom_t_thal
+        Administrators:
+            - vlcinsky
+            - burespe1
+            - rhorenov
