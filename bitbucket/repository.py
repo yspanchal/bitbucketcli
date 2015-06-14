@@ -101,7 +101,7 @@ class Repocreate(ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         args = {}
 
@@ -134,13 +134,15 @@ class Repocreate(ShowOne):
             data.pop('resource_uri')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Created.\n"
+            msg = "\nRepository '{a.reponame}' Created.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         elif r.status_code == 400:
-            self.app.stdout.write(
-                "\n Error: " + "'" + str(r.status_code) + "'" +
-                " You already have a repository with name " + "'" +
-                parsed_args.reponame + "'" + ".\n")
+
+            msg = ("\n Error: '{r.status_code}' "
+                   "You already have a repository with name ' {a.reponame}'.\n")
+
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(0)
         else:
             self.app.stdout.write('\nError: Bad request.\n')
@@ -150,7 +152,8 @@ class Repocreate(ShowOne):
 class Repoedit(ShowOne):
 
     """
-    * Edit existing repository information, add issues & wiki modules to repository
+    * Edit existing repository information, add issues & wiki modules to
+    repository
     """
     log = logging.getLogger(__name__ + '.Repoedit')
     requests_log = logging.getLogger("requests")
@@ -211,7 +214,7 @@ class Repoedit(ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         args = {}
 
@@ -230,8 +233,8 @@ class Repoedit(ShowOne):
         if parsed_args.language:
             args['language'] = parsed_args.language
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.}/{a.}/").format(a=parsed_args)
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -239,10 +242,12 @@ class Repoedit(ShowOne):
             data.pop('resource_uri')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Edited.\n"
+            msg = "\nRepository '{a.reponame}' Edited.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         if r.status_code == 400:
-            print "'" + parsed_args.language + "'" + " is not valid language choice."
+            msg = "'{a.language}' is not valid language choice."
+            print msg .format(a=parsed_args)
             sys.exit(1)
         else:
             self.app.stdout.write('\nError: Bad request.\n')
@@ -275,15 +280,18 @@ class Repodelete(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s" % (
-            parsed_args.account, parsed_args.reponame)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}").format(a=parsed_args)
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Repository " + "'" + parsed_args.reponame + "'" " Deleted.\n"
+            msg = "\n Repository '{a.reponame}' Deleted.\n"
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            print " Error: Invalid requests, " + "'" + str(r.status_code) + "'" + " or No such repository found."
+            msg = (" Error: Invalid requests, '{r.status_code}'"
+                   " or No such repository found.")
+            print msg.format(r=r)
             sys.exit(1)
 
 
@@ -297,8 +305,9 @@ class Repolist(Lister):
     requests_log.setLevel(logging.WARNING)
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/repositories/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/repositories/")
         r = requests.get(url, auth=(user, passwd))
         data = json.loads(r.text)
         return (('Owner', 'Repo Name', 'Created On'),
@@ -326,8 +335,9 @@ class Repodetail(ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/repositories/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/repositories/")
         r = requests.get(url, auth=(user, passwd))
         data = json.loads(r.text)
         for i in data:
@@ -337,12 +347,9 @@ class Repodetail(ShowOne):
                 columns = i.viewkeys()
                 data = i.viewvalues()
                 return (columns, data)
-        self.app.stdout.write(
-            '\nError: ' +
-            '"' +
-            parsed_args.reponame +
-            '"' +
-            ' No such repository found.\n\n')
+
+        msg = '\nError: "{a.reponame}" No such repository found.\n\n'
+        self.app.stdout.write(msg.format(a=parsed_args))
         sys.exit(1)
 
 
@@ -372,20 +379,17 @@ class Repotag(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/tags/" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "tags/").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if data == {}:
-                self.app.stdout.write(
-                    '\nNo Tags Found for ' +
-                    '"' +
-                    parsed_args.reponame +
-                    '"' +
-                    '.\n\n')
+                msg = '\nNo Tags Found for "{a.reponame}".\n\n'
+                self.app.stdout.write(msg.format(a=parsed_args))
                 sys.exit(0)
             else:
                 for i in data:
@@ -398,11 +402,10 @@ class Repotag(Command):
                     newdata.add_row(["Message", data[i]['message']])
                     print newdata
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
 
 
 class Repobranch(Command):
@@ -431,20 +434,17 @@ class Repobranch(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/branches" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "branches").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if data == {}:
-                self.app.stdout.write(
-                    '\nNo branches Found for ' +
-                    '"' +
-                    parsed_args.reponame +
-                    '"' +
-                    '.\n\n')
+                msg = '\nNo branches Found for "{a.reponame}".\n\n'
+                self.app.stdout.write(msg.format(a=parsed_args))
                 sys.exit(0)
             else:
                 for i in data:
@@ -457,11 +457,10 @@ class Repobranch(Command):
                     newdata.add_row(["Message", data[i]['message']])
                     print newdata
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
 
 
 class Repodeploykeysget(Command):
@@ -490,20 +489,24 @@ class Repodeploykeysget(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if len(data) != 0:
+                loopmsg = """
+Key ID: {k[pk]}
+Key: {k[key]}
+Key Label: {k[label]}
+=======================================================
+"""
                 for key in data:
-                    print "\nKey ID: %s" % (key['pk'])
-                    print "Key: %s" % (key['key'])
-                    print "Key Label: %s" % (key['label'])
-                    print "======================================================="
+                    print loopmsg.format(k=key)
                 sys.exit(0)
             else:
                 print "\n No deployment key found.\n"
@@ -511,10 +514,10 @@ class Repodeploykeysget(Command):
         else:
             msg = ('\n'
                    ' Error: {r.status_code} {reason}\n'
-                   ' Account name: "{parsed_args.account}'
-                   ' Repository name: "{parsed_args.reponame}'
+                   ' Account name: "{a.account}'
+                   ' Repository name: "{a.reponame}'
                    '\n\n')
-            msg = msg.format(r=r, parsed_args=parsed_args, reason=get_reason(r))
+            msg = msg.format(r=r, a=parsed_args, reason=get_reason(r))
             self.app.stdout.write(msg)
             sys.exit(1)
 
@@ -557,10 +560,11 @@ class Repodeploykeyspost(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/").format(a=parsed_args)
 
         args = {}
 
@@ -573,20 +577,27 @@ class Repodeploykeyspost(Command):
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\nNew deployment key added."
-            print "\nKey ID: %s\n" % (data['pk'])
-            print "Key: %s\n" % (data['key'])
-            print "Key Label: %s\n" % (data['label'])
+
+            msg = """
+New deployment key added."
+
+Key ID: {d[pk]}
+
+Key: {d[key]}
+
+Key Label: {d[label]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            print "\n Error: Someone has already registered this as an account SSH key.\n"
+            print ("\n Error: Someone has already registered"
+                   " this as an account SSH key.\n")
             sys.exit(1)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -634,10 +645,11 @@ class Repodeploykeysedit(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (
-            parsed_args.account, parsed_args.reponame, parsed_args.key_id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/{a.key_id}").format(a=parsed_args)
 
         args = {}
 
@@ -650,18 +662,26 @@ class Repodeploykeysedit(Command):
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\nDeployment key edited."
-            print "\nKey ID: %s\n" % (data['pk'])
-            print "Key: %s\n" % (data['key'])
-            print "Key Label: %s\n" % (data['label'])
+            msg = """
+Deployment key edited."
+
+Key ID: {d[pk]}
+
+Key: {d[key]}
+
+Key Label: {d[label]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            print "\n Error: Someone has already registered this as an account SSH key.\n"
+            print ("\n Error: Someone has already"
+                   " registered this as an account SSH key.\n")
             sys.exit(1)
         else:
-            msg = '\n Error: "{r.status_code}" Invalid request, Invalid aaAccount name "{parsed_args.account}" or Repository Name "{parsed_args.reponame}"\n\n'
-            #msg = '\n Error: ' + '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n'
-            self.app.stdout.write(msg.format(r=r, parsed_args=parsed_args))
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid aaAccount name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -697,21 +717,24 @@ class Repodeploykeysdelete(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (
-            parsed_args.account, parsed_args.reponame, parsed_args.key_id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/{a.key_id}").format(a=parsed_args.account)
 
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Success: Repository deployment key " + "'" + parsed_args.key_id + "'" " deleted.\n"
+            msg = """
+ Success: Repository deployment key '{a.key_id}' deleted.
+"""
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(1)
 
 
@@ -765,10 +788,11 @@ class Repofork(ShowOne):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/fork/" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "fork/").format(a=parsed_args)
 
         args = {}
 
@@ -792,14 +816,15 @@ class Repofork(ShowOne):
             data.pop('fork_of')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Forked.\n"
+            msg = "\nRepository '{a.reponame}' Forked.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a..account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -840,29 +865,30 @@ class Reporevision(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         if parsed_args.path:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/%s" % (
-                parsed_args.account, parsed_args.reponame, parsed_args.revision, parsed_args.path)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "src/{a.revision}/{a.path}").format(a=parsed_args)
         else:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/" % (
-                parsed_args.
-                account,
-                parsed_args.
-                reponame,
-                parsed_args.
-                revision)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "src/{a.revision}/").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
 
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Repository Source Details: \n"
-            print "Revision: '%s'" % (data['node'])
-            print "Path: '%s'" % (data['path'])
-            print "directories: %s" % (data['directories'])
-            print "Files: "
+            msg = """
+ Repository Source Details:
+
+Revision: '{d[node]}'
+Path: '{d[path]}'
+directories: {d[directories]}
+Files:
+"""
+            print msg.format(d=data)
             for f in data['files']:
                 newdata = prettytable.PrettyTable(["Fields", "Values"])
                 newdata.padding_width = 1
@@ -873,11 +899,10 @@ class Reporevision(Command):
                 print newdata
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a..account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -923,32 +948,31 @@ class Reposharepost(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (
-            parsed_args.
-            account,
-            parsed_args.
-            reponame,
-            parsed_args.
-            share)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}/"
+               "{a.share}").format(a=parsed_args)
 
         args = {}
         args['permission'] = parsed_args.permission
         r = requests.put(url, data=parsed_args.permission, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Repository " + "'" + parsed_args.reponame + "'" + " shared with " + "'" + parsed_args.share + "'"
-            print "\nRepository: %s" % (data[0]['repo'])
-            print "Shared with: %s" % (data[0]['user']['username'])
-            print "Permission: %s" % (data[0]['privilege'])
+
+            msg = """
+ Repository '{a.reponame}' shared with '{a.share}'
+
+Repository: {d[0][repo]}
+Shared with: {d[0][user][username]}
+Permission: {d[0][privilege]}"""
+            print msg.format(d=data)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(1)
 
 
@@ -978,26 +1002,29 @@ class Reposhareget(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s" % (
-            parsed_args.account, parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
+
+            loopmsg = """
+Repository: {i[repo]}
+Shared with: {i[user][username]}
+Permission: {i[privilege]}
+================================================"
+"""
             for i in data:
-                print "\nRepository: %s" % (i['repo'])
-                print "Shared with: %s" % (i['user']['username'])
-                print "Permission: %s" % (i['privilege'])
-                print "================================================"
+                print loopmsg.format(i=i)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -1033,26 +1060,23 @@ class Reposharedelete(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (
-            parsed_args.
-            account,
-            parsed_args.
-            reponame,
-            parsed_args.
-            share)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}/"
+               "{a.share}").format(a=parsed_args)
 
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Privileges for user " + "'" + parsed_args.share + "'" + " removed on repository " + "'" + parsed_args.reponame + "'"
+            msg = ("\n Privileges for user '{a.share}'"
+                   " removed on repository '{a.reponame}'")
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '" or Repository Name ' + '"' +
-                parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
