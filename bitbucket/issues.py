@@ -15,12 +15,10 @@
 
 import os
 import sys
-import csv
 import json
 import imp
 import urllib
 import tablib
-import argparse
 import logging
 import requests
 import prettytable
@@ -66,7 +64,8 @@ class Getissue(ShowOne):
             '-l',
             metavar='<issue limit>',
             type=int,
-            help='The number of issue to get, you can choose 0-50, default is 15')
+            help=('The number of issue to get, you can choose 0-50,'
+                  ' default is 15'))
         parser.add_argument(
             '--status',
             '-s',
@@ -142,11 +141,12 @@ class Getissue(ShowOne):
             '--export',
             '-x',
             action='store_true',
-            help='Export as CSV [Note:Does not work with issue detail & issue followers]')
+            help=('Export as CSV '
+                  '[Note:Does not work with issue detail & issue followers]'))
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         args = {}
         args_id = {}
@@ -184,23 +184,30 @@ class Getissue(ShowOne):
         issuefilter_url = {}
         issuefollowers_url = {}
 
-        if args == {} and args_id == {} and args_followers == {}:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/?" % (
-                parsed_args.account, parsed_args.reponame)
+        if all([not(args),
+                not(args_id),
+                not(args_followers)]):
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "issues/?").format(a=parsed_args)
             issuelist_url['url'] = url
         elif args == {} and args_followers == {} and args_id != {}:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s" % (
-                parsed_args.account, parsed_args.reponame, parsed_args.id)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "issues/{a.id}").format(a=parsed_args)
             issuedetail_url['url'] = url
         elif args_id == {} and args_followers == {} and args != {}:
-            primaryurl = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/?" % (
-                parsed_args.account, parsed_args.reponame)
+            primaryurl = ("https://bitbucket.org/api/1.0/"
+                          "repositories/{a.account}/{a.reponame}/"
+                          "issues/?").format(a=parsed_args)
             params = urllib.urlencode(args)
             url = primaryurl + params
             issuefilter_url['url'] = url
         elif args == {} and args_id != {} and args_followers != {}:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/followers" % (
-                parsed_args.account, parsed_args.reponame, parsed_args.id)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "issues/{a.id}/"
+                   "followers").format(a=parsed_args)
             issuefollowers_url['url'] = url
         else:
             self.app.stdout.write('\nInvalid argument supplied.\n')
@@ -211,10 +218,15 @@ class Getissue(ShowOne):
         try:
             data = json.loads(r.text)
         except:
-            print "\n Error: '404' No Issues Found 'or' Invalid argument supplied.\n"
+            print """
+ Error: '404' No Issues Found ' or ' Invalid argument supplied.
+"""
             sys.exit(1)
 
-        if issuelist_url != {} and issuedetail_url == {} and issuefilter_url == {} and issuefollowers_url == {}:
+        if all([issuelist_url,
+                not(issuedetail_url),
+                not(issuefilter_url),
+                not(issuefollowers_url)]):
             if parsed_args.export:
                 csvdata = tablib.Dataset()
                 csvdata.headers = [
@@ -312,11 +324,20 @@ class Getissue(ShowOne):
                     print "\n CSV File created.\n"
                     sys.exit(0)
             else:
-                print "\nTotal Issues: %s\n" % (data['count'])
+                print "\nTotal Issues: {d[count]}\n".format(d=data)
+
+                loopmsg = """Issue_ID: {i[local_id]}
+Issue_Status: {i[status]}
+Issue_Title: {i[title]}
+======================================================================="""
+
                 for i in data['issues']:
-                    print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" % (i['local_id'], i['status'], i['title'])
+                    print loopmsg.format(i=i)
                 sys.exit(0)
-        elif issuedetail_url != {} and issuelist_url == {} and issuefilter_url == {} and issuefollowers_url == {}:
+        elif all([issuedetail_url,
+                  not(issuelist_url),
+                  not(issuefilter_url),
+                  not(issuefollowers_url)]):
             newdata = {}
             newdata['issue id'] = data['local_id']
             newdata['status'] = data['status']
@@ -338,7 +359,10 @@ class Getissue(ShowOne):
             print "\nTitle: %s\n" % (data['title'])
             print "Content: %s\n" % (data['content'])
             return (columns, columndata)
-        elif issuefilter_url != {} and issuelist_url == {} and issuedetail_url == {} and issuefollowers_url == {}:
+        elif all([issuefilter_url,
+                  not(issuelist_url),
+                  not(issuedetail_url),
+                  not(issuefollowers_url)]):
             if parsed_args.export:
                 csvdata = tablib.Dataset()
                 csvdata.headers = [
@@ -448,11 +472,19 @@ class Getissue(ShowOne):
                     print "\n CSV File created.\n"
                 sys.exit(0)
             else:
-                print "\nTotal Issues: %s\n" % (data['count'])
+                print "\nTotal Issues: {d[count]}\n".format(d=data)
+
+                loopmsg = """Issue_ID: {i[local_id]}
+Issue_Status: {i[status]}
+Issue_Title: {i[title]}
+======================================================================="""
                 for i in data['issues']:
-                    print """Issue_ID: %s\nIssue_Status: %s\nIssue_Title: %s\n=======================================================================""" % (i['local_id'], i['status'], i['title'])
+                    print loopmsg.format(i=i)
                 sys.exit(0)
-        elif issuefollowers_url != {} and issuelist_url == {} and issuedetail_url == {} and issuefilter_url == {}:
+        elif all([issuefollowers_url,
+                  not(issuelist_url),
+                  not(issuedetail_url),
+                  not(issuefilter_url)]):
             print "\nFollowers Count: %s\n" % (data['count'])
             for i in data['followers']:
                 print "Followers Name: %s" % (i['username'])
@@ -881,14 +913,20 @@ class Getcomment(Command):
     def take_action(self, parsed_args):
         self.log.debug('take_action(%s)' % parsed_args)
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/comments/" % (
-            parsed_args.account, parsed_args.reponame, parsed_args.id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "issues/{a.id}/"
+               "comments/").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
+            loopmsg = """
+
+Comment: {c[content]}
+{newdata}
+---------------------------------------------------------------
+"""
             for comment in data:
-                print "\n"
-                print "Comment: %s" % (comment['content'])
                 newdata = prettytable.PrettyTable(["Fields", "Values"])
                 newdata.padding_width = 1
                 newdata.add_row(
@@ -897,8 +935,7 @@ class Getcomment(Command):
                 newdata.add_row(["Comment ID", comment['comment_id']])
                 newdata.add_row(["UTC Updated on", comment['utc_updated_on']])
                 newdata.add_row(["UTC Created on", comment['utc_created_on']])
-                print newdata
-                print "---------------------------------------------------------------"
+                print loopmsg.format(c=comment, newdata=newdata)
             sys.exit(0)
         else:
             self.app.stdout.write(
@@ -946,13 +983,13 @@ class Postcomment(Command):
     def take_action(self, parsed_args):
         self.log.debug('take_action(%s)' % parsed_args)
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues/%s/comments/" % (
-            parsed_args.account, parsed_args.reponame, parsed_args.id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "issues/{a.id}/"
+               "comments/").format(a=parsed_args)
         r = requests.post(url, data=parsed_args.content, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n"
-            print "Comment: %s" % (data['content'])
             newdata = prettytable.PrettyTable(["Fields", "Values"])
             newdata.padding_width = 1
             newdata.add_row(
@@ -960,8 +997,11 @@ class Postcomment(Command):
             newdata.add_row(["Comment ID", data['comment_id']])
             newdata.add_row(["UTC Updated on", data['utc_updated_on']])
             newdata.add_row(["UTC Created on", data['utc_created_on']])
-            print newdata
-            print "---------------------------------------------------------------"
+            msg = """
+Comment: d[content]s" % (data['content'])
+{newdata}
+---------------------------------------------------------------"""
+            print msg.format(d=data, newdata=newdata)
             sys.exit(0)
         else:
             self.app.stdout.write(
