@@ -82,16 +82,19 @@ class Sshkeyget(Command):
             r = requests.get(url, auth=(user, passwd))
             if r.status_code == 200:
                 data = json.loads(r.text)
+
+                loopmsg = """
+Key ID: {k[pk]}
+Key: {k[key]}
+Key Label: {k[label]}
+=======================================================
+"""
                 for key in data:
-                    print "\nKey ID: %s" % (key['pk'])
-                    print "Key: %s" % (key['key'])
-                    print "Key Label: %s" % (key['label'])
-                    print "======================================================="
+                    print loopmsg.format(k=key)
                 sys.exit(0)
             else:
-                self.app.stdout.write(
-                    '\n Error: ' + '"' + str(r.status_code) + '"' +
-                    ' Invalid request\n\n')
+                msg = '\n Error: "{r.status_code}" Invalid request\n\n'
+                self.app.stdout.write(msg.format(r=r))
                 sys.exit(1)
 
 
@@ -133,25 +136,28 @@ class Sshkeypost(Command):
         args['key'] = parsed_args.key
         args['label'] = parsed_args.label
 
-        url = "https://bitbucket.org/api/1.0/users/%s/ssh-keys/" % (
-            parsed_args.account)
+        url = ("https://bitbucket.org/api/1.0/"
+               "users/{a.account}/ssh-keys/").format(a=parsed_args)
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Key added to your account"
-            print "\nKey ID: %s" % (data['pk'])
-            print "Key: %s" % (data['key'])
-            print "Key Label: %s" % (data['label'])
+            msg = """
+ Key added to your account"
+
+Key ID: {d[pk]}
+Key: {d[key]}
+Key Label: {d[label]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Someone has already registered that SSH key\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Someone has already registered that SSH key\n\n')
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request\n\n')
+            msg = '\n Error: "{r.status_code}" Invalid request\n\n'
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
 
 
@@ -183,14 +189,14 @@ class Sshkeydelete(Command):
     def take_action(self, parsed_args):
         self.log.debug('take_action(%s)' % parsed_args)
 
-        url = "https://bitbucket.org/api/1.0/users/%s/ssh-keys/%s" % (
-            parsed_args.account, parsed_args.key_id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "users/{a.account}/"
+               "ssh-keys/{a.key_id}").forma(a=parsed_args)
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Key ID " + "'" + str(parsed_args.key_id) + "'" + " deleted.\n"
+            print "\n Key ID '{a.key_id}' deleted.\n".format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request\n\n')
+            msg = '\n Error: "{r.status_code}" Invalid request\n\n'
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
