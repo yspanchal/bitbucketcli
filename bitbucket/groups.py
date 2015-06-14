@@ -59,9 +59,10 @@ class Groups(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/" % (parsed_args.account)
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -128,9 +129,10 @@ class Creategroup(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/" % parsed_args.account
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/").format(a=parsed_args)
 
         args = {}
         args['name'] = parsed_args.name
@@ -142,20 +144,32 @@ class Creategroup(Command):
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n New group created."
-            print "\nGroup Name: %s" % (data['name'])
-            print "Group Owner: %s" % (data['owner']['username'])
-            print "Group Permission: %s\n" % (data['permission'])
+
+            msg = """
+ New group created."
+
+Group Name: {d[name]}
+Group Owner: {d[owner][username]}
+Group Permission: {d[permission]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            print "\n Error: " + str(r.status_code) + " Bad request."
-            print "\n A group with name " + "'" + parsed_args.name + "'" + " already exists.\n"
+
+            msg = """
+ Error: {r.status_code} Bad request."
+
+ A group with name '{a.name}' already exists.
+"""
+            print msg.format(r=r, a=parsed_args)
             sys.exit(1)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request, Invalid Account name ' + '"' +
-                parsed_args.account + '\n\n')
+
+            msg = """
+ Error: "{r.status_code}" Invalid request, Invalid Account name "{a.account}"
+
+"""
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
@@ -185,19 +199,22 @@ class Deletegroup(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/%s/" % (
-            parsed_args.account, parsed_args.name)
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/{a.name}/").format(a=parsed_args)
 
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Group " + "'" + parsed_args.name + "'" + " deleted.\n"
+            print "\n Group '{a.name}' deleted.\n".format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request \n\n')
+
+            msg = """
+ Error: "{r.status_code}" Invalid request
+
+"""
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
 
 
@@ -227,15 +244,15 @@ class Groupmembers(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/%s/members/" % (
-            parsed_args.account, parsed_args.name)
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/{a.name}/members/").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Group Name: %s" % (parsed_args.name)
+            print "\n Group Name: {a.name}".format(a=parsed_args)
             newdata = prettytable.PrettyTable()
             newdata.padding_width = 1
             newdata.add_column("Members", [i['username'] for i in data])
@@ -279,28 +296,32 @@ class Addgroupmember(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/%s/members/%s/" % (
-            parsed_args.
-            account,
-            parsed_args.
-            name,
-            parsed_args.
-            member)
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/{a.name}/"
+               "members/{a.member}/").format(a=parsed_args)
 
         r = requests.put(url, auth=(user, passwd))
         if r.status_code == 200:
-            data = json.loads(r.text)
-            print "\n User " + "'" + parsed_args.member + "'" + " added to group " + "'" + parsed_args.name + "'\n"
+            msg = """
+ User '{a.member}' added to group '{a.name}'
+ """
+            print msg.format(a=parsed_args)
             sys.exit(0)
         elif r.status_code == 409:
-            print "\n 'Conflict/Duplicate' User " + "'" + parsed_args.member + "'" + " present in group\n"
+            msg = """
+ 'Conflict/Duplicate' User '{a.member}' present in group
+ """
+            print msg.format(a=parsed_args)
             sys.exit(1)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request \n\n')
+
+            msg = """
+ Error: "{r.status_code}" Invalid request
+
+ """
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
 
 
@@ -336,22 +357,24 @@ class Deletegroupmember(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/groups/%s/%s/members/%s/" % (
-            parsed_args.
-            account,
-            parsed_args.
-            name,
-            parsed_args.
-            member)
+        url = ("https://bitbucket.org/api/1.0/"
+               "groups/{a.account}/{a.name}/"
+               "members/{a.member}/").format(a=parsed_args)
 
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n User " + "'" + parsed_args.member + "'" + " removed from group " + "'" + parsed_args.name + "'\n"
+            msg = """
+ User '{a.member}' removed from group '{a.name}'
+"""
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write(
-                '\n Error: ' + '"' + str(r.status_code) + '"' +
-                ' Invalid request \n\n')
+
+            msg = """
+ Error: "{r.status_code}" Invalid request
+
+ """
+            self.app.stdout.write(msg.format(r=r))
             sys.exit(1)
