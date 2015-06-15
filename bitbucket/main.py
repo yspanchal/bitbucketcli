@@ -1,17 +1,16 @@
+# Copyright (c) 2013 Yogesh Panchal, yspanchal@gmail.com
 
-   # Copyright (c) 2013 Yogesh Panchal, yspanchal@gmail.com
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-   # Licensed under the Apache License, Version 2.0 (the "License");
-   # you may not use this file except in compliance with the License.
-   # You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-   #     http://www.apache.org/licenses/LICENSE-2.0
-
-   # Unless required by applicable law or agreed to in writing, software
-   # distributed under the License is distributed on an "AS IS" BASIS,
-   # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   # See the License for the specific language governing permissions and
-   # limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 """Command-line interface to the BitBucket."""
@@ -24,14 +23,14 @@ import requests
 import getpass
 from os.path import expanduser
 from cliff.app import App
-from cliff import help
 from cliff.commandmanager import CommandManager
 
 
 class BitBucketApp(App):
+
     """
     * BitBucket global app
-    """ 
+    """
 
     log = logging.getLogger(__name__)
 
@@ -51,7 +50,9 @@ class BitBucketApp(App):
         if not os.path.exists(filename):
             print "Login to Your BitBucket Account.\n"
             url = "https://bitbucket.org/api/1.0/user/"
-            user = raw_input('Enter BitBucket Username or Email [%s]:' % getpass.getuser())
+            user = raw_input(
+                'Enter BitBucket Username or Email [%s]:' %
+                getpass.getuser())
             if not user:
                 user = getpass.getuser()
 
@@ -63,14 +64,14 @@ class BitBucketApp(App):
             else:
                 passwd = p1
             requests_log = logging.getLogger("requests")
-            requests_log.setLevel(logging.WARNING)    
+            requests_log.setLevel(logging.WARNING)
             r = requests.get(url, auth=(user, passwd))
             status = r.status_code
             if status != 200:
                 print "Authentication Error. Invalid Username or Password.\n"
                 sys.exit(1)
             else:
-                f = open(filename,'w')
+                f = open(filename, 'w')
                 f.write("username = " + "'" + user + "'" + "\n")
                 f.write("passwd = " + "'" + p1 + "'" + "\n")
                 print("Login Successful.\n")
@@ -82,7 +83,7 @@ class BitBucketApp(App):
 
     def initialize_app(self, argv):
         """
-        * Initialize bitbucket app 
+        * Initialize bitbucket app
         """
         self.log.debug('initialize_app')
         command_name = None

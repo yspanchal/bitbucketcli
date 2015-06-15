@@ -1,17 +1,16 @@
+# Copyright (c) 2013 Yogesh Panchal, yspanchal@gmail.com
 
-   # Copyright (c) 2013 Yogesh Panchal, yspanchal@gmail.com
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-   # Licensed under the Apache License, Version 2.0 (the "License");
-   # you may not use this file except in compliance with the License.
-   # You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
 
-   #     http://www.apache.org/licenses/LICENSE-2.0
-
-   # Unless required by applicable law or agreed to in writing, software
-   # distributed under the License is distributed on an "AS IS" BASIS,
-   # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   # See the License for the specific language governing permissions and
-   # limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 import os
@@ -36,8 +35,8 @@ except (IOError, NameError):
     pass
 
 
-
 class Repocreate(ShowOne):
+
     """
     * Create new repository
     """
@@ -47,17 +46,62 @@ class Repocreate(ShowOne):
 
     def get_parser(self, prog_name):
         parser = super(Repocreate, self).get_parser(prog_name)
-        parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
-        parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
-        parser.add_argument('--owner', '-o', metavar='<owner>', help='Repository Owner')
-        parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], required=False, help='repository is private ?')
-        parser.add_argument('--scm', '-s', metavar='<scm>', choices=['git', 'hg'], required=False, help='The repository scm')
-        parser.add_argument('--has_issues', '-i', metavar='<has_issues>', choices=['true', 'false'], required=False, help='The repository has issues ?')
-        parser.add_argument('--has_wiki', '-w', metavar='<has_wiki>', choices=['true', 'false'], required=False, help='The repository has wiki ?')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            required=True,
+            metavar='<reponame>',
+            help='The repository name')
+        parser.add_argument(
+            '--description',
+            '-d',
+            metavar='<description>',
+            help='The repository description')
+        parser.add_argument(
+            '--owner',
+            '-o',
+            metavar='<owner>',
+            help='Repository Owner')
+        parser.add_argument(
+            '--is_private',
+            '-p',
+            metavar='<is_private>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='repository is private ?')
+        parser.add_argument(
+            '--scm',
+            '-s',
+            metavar='<scm>',
+            choices=[
+                'git',
+                'hg'],
+            required=False,
+            help='The repository scm')
+        parser.add_argument(
+            '--has_issues',
+            '-i',
+            metavar='<has_issues>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='The repository has issues ?')
+        parser.add_argument(
+            '--has_wiki',
+            '-w',
+            metavar='<has_wiki>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='The repository has wiki ?')
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         args = {}
 
@@ -90,10 +134,15 @@ class Repocreate(ShowOne):
             data.pop('resource_uri')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Created.\n"
+            msg = "\nRepository '{a.reponame}' Created.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         elif r.status_code == 400:
-            self.app.stdout.write("\n Error: " + "'" + str(r.status_code) + "'" + " You already have a repository with name " + "'" + parsed_args.reponame + "'" + ".\n")
+
+            msg = ("\n Error: '{r.status_code}' "
+                   "You already have a repository with name ' {a.reponame}'.\n")
+
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(0)
         else:
             self.app.stdout.write('\nError: Bad request.\n')
@@ -101,8 +150,10 @@ class Repocreate(ShowOne):
 
 
 class Repoedit(ShowOne):
+
     """
-    * Edit existing repository information, add issues & wiki modules to repository
+    * Edit existing repository information, add issues & wiki modules to
+    repository
     """
     log = logging.getLogger(__name__ + '.Repoedit')
     requests_log = logging.getLogger("requests")
@@ -110,17 +161,60 @@ class Repoedit(ShowOne):
 
     def get_parser(self, prog_name):
         parser = super(Repoedit, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', required=True, metavar='<account>', help='The account name')
-        parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
-        parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
-        parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], required=False, help='repository is private ?')
-        parser.add_argument('--has_issues', '-i', metavar='<has_issues>', choices=['true', 'false'], required=False, help='The repository has issues ?')
-        parser.add_argument('--has_wiki', '-w', metavar='<has_wiki>', choices=['true', 'false'], required=False, help='The repository has wiki ?')
-        parser.add_argument('--language', '-l', metavar='<language>', required=False, help='The repository language')
+        parser.add_argument(
+            '--account',
+            '-a',
+            required=True,
+            metavar='<account>',
+            help='The account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            required=True,
+            metavar='<reponame>',
+            help='The repository name')
+        parser.add_argument(
+            '--description',
+            '-d',
+            metavar='<description>',
+            help='The repository description')
+        parser.add_argument(
+            '--is_private',
+            '-p',
+            metavar='<is_private>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='repository is private ?')
+        parser.add_argument(
+            '--has_issues',
+            '-i',
+            metavar='<has_issues>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='The repository has issues ?')
+        parser.add_argument(
+            '--has_wiki',
+            '-w',
+            metavar='<has_wiki>',
+            choices=[
+                'true',
+                'false'],
+            required=False,
+            help='The repository has wiki ?')
+        parser.add_argument(
+            '--language',
+            '-l',
+            metavar='<language>',
+            required=False,
+            help='The repository language')
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         args = {}
 
@@ -139,7 +233,8 @@ class Repoedit(ShowOne):
         if parsed_args.language:
             args['language'] = parsed_args.language
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.}/{a.}/").format(a=parsed_args)
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -147,10 +242,12 @@ class Repoedit(ShowOne):
             data.pop('resource_uri')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Edited.\n"
+            msg = "\nRepository '{a.reponame}' Edited.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         if r.status_code == 400:
-            print "'" + parsed_args.language + "'" + " is not valid language choice."
+            msg = "'{a.language}' is not valid language choice."
+            print msg .format(a=parsed_args)
             sys.exit(1)
         else:
             self.app.stdout.write('\nError: Bad request.\n')
@@ -158,6 +255,7 @@ class Repoedit(ShowOne):
 
 
 class Repodelete(Command):
+
     """
     * Delete existing repository
     """
@@ -167,23 +265,38 @@ class Repodelete(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repodelete, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', required=True, metavar='<account>', help='The repository account name')
-        parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
+        parser.add_argument(
+            '--account',
+            '-a',
+            required=True,
+            metavar='<account>',
+            help='The repository account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            required=True,
+            metavar='<reponame>',
+            help='The repository name')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s" % (parsed_args.account,parsed_args.reponame)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}").format(a=parsed_args)
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Repository " + "'" + parsed_args.reponame + "'" " Deleted.\n"
+            msg = "\n Repository '{a.reponame}' Deleted.\n"
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            print " Error: Invalid requests, " + "'" + str(r.status_code) + "'" + " or No such repository found."
+            msg = (" Error: Invalid requests, '{r.status_code}'"
+                   " or No such repository found.")
+            print msg.format(r=r)
             sys.exit(1)
 
 
 class Repolist(Lister):
+
     """
     * List all repository associated with users account
     """
@@ -192,15 +305,18 @@ class Repolist(Lister):
     requests_log.setLevel(logging.WARNING)
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/repositories/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/repositories/")
         r = requests.get(url, auth=(user, passwd))
         data = json.loads(r.text)
-        return (('Owner', 'Repo Name', 'Created On' ),
-            ((i['owner'], i['name'], i['created_on']) for i in data)
-            )
+        return (('Owner', 'Repo Name', 'Created On'),
+                ((i['owner'], i['name'], i['created_on']) for i in data)
+                )
+
 
 class Repodetail(ShowOne):
+
     """
     * Provide individual repository details
     """
@@ -210,12 +326,18 @@ class Repodetail(ShowOne):
 
     def get_parser(self, prog_name):
         parser = super(Repodetail, self).get_parser(prog_name)
-        parser.add_argument('--reponame', '-r', required=True, metavar='<reponame>', help='The repository name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            required=True,
+            metavar='<reponame>',
+            help='The repository name')
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
-        url = "https://bitbucket.org/api/1.0/user/repositories/"
+        self.log.debug('take_action({a})'.format(a=parsed_args))
+        url = ("https://bitbucket.org/api/1.0/"
+               "user/repositories/")
         r = requests.get(url, auth=(user, passwd))
         data = json.loads(r.text)
         for i in data:
@@ -225,10 +347,14 @@ class Repodetail(ShowOne):
                 columns = i.viewkeys()
                 data = i.viewvalues()
                 return (columns, data)
-        self.app.stdout.write('\nError: ' + '"' + parsed_args.reponame + '"' + ' No such repository found.\n\n')
+
+        msg = '\nError: "{a.reponame}" No such repository found.\n\n'
+        self.app.stdout.write(msg.format(a=parsed_args))
         sys.exit(1)
 
+
 class Repotag(Command):
+
     """
     * Returns repository tags
     """
@@ -238,19 +364,32 @@ class Repotag(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repotag, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/tags/" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "tags/").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if data == {}:
-                self.app.stdout.write('\nNo Tags Found for ' + '"' + parsed_args.reponame + '"' + '.\n\n')
+                msg = '\nNo Tags Found for "{a.reponame}".\n\n'
+                self.app.stdout.write(msg.format(a=parsed_args))
                 sys.exit(0)
             else:
                 for i in data:
@@ -263,10 +402,14 @@ class Repotag(Command):
                     newdata.add_row(["Message", data[i]['message']])
                     print newdata
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
 
 
 class Repobranch(Command):
+
     """
     * Returns repository branches
     """
@@ -276,19 +419,32 @@ class Repobranch(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repobranch, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/branches" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "branches").format(a=parsed_args)
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if data == {}:
-                self.app.stdout.write('\nNo branches Found for ' + '"' + parsed_args.reponame + '"' + '.\n\n')
+                msg = '\nNo branches Found for "{a.reponame}".\n\n'
+                self.app.stdout.write(msg.format(a=parsed_args))
                 sys.exit(0)
             else:
                 for i in data:
@@ -301,10 +457,14 @@ class Repobranch(Command):
                     newdata.add_row(["Message", data[i]['message']])
                     print newdata
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
 
 
 class Repodeploykeysget(Command):
+
     """
     * Get list of repository deployment keys
     """
@@ -314,39 +474,56 @@ class Repodeploykeysget(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repodeploykeysget, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
             if len(data) != 0:
+                loopmsg = """
+Key ID: {k[pk]}
+Key: {k[key]}
+Key Label: {k[label]}
+=======================================================
+"""
                 for key in data:
-                    print "\nKey ID: %s" % (key['pk'])
-                    print "Key: %s" % (key['key'])
-                    print "Key Label: %s" % (key['label'])
-                    print "======================================================="
+                    print loopmsg.format(k=key)
                 sys.exit(0)
             else:
                 print "\n No deployment key found.\n"
                 sys.exit(0)
         else:
             msg = ('\n'
-            ' Error: {r.status_code} {reason}\n'
-            ' Account name: "{parsed_args.account}'
-            ' Repository name: "{parsed_args.reponame}'
-            '\n\n')
-            msg = msg.format(r=r, parsed_args=parsed_args, reason=get_reason(r))
+                   ' Error: {r.status_code} {reason}\n'
+                   ' Account name: "{a.account}'
+                   ' Repository name: "{a.reponame}'
+                   '\n\n')
+            msg = msg.format(r=r, a=parsed_args, reason=get_reason(r))
             self.app.stdout.write(msg)
             sys.exit(1)
 
+
 class Repodeploykeyspost(Command):
+
     """
     * Add new repository deployment key
     """
@@ -356,16 +533,38 @@ class Repodeploykeyspost(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repodeploykeyspost, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--key', '-k', metavar='<key>', required=True, help='The repository deploy-key')
-        parser.add_argument('--label', '-l', metavar='<key-label>', required=True, help='The repository deploy-key label')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--key',
+            '-k',
+            metavar='<key>',
+            required=True,
+            help='The repository deploy-key')
+        parser.add_argument(
+            '--label',
+            '-l',
+            metavar='<key-label>',
+            required=True,
+            help='The repository deploy-key label')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/").format(a=parsed_args)
 
         args = {}
 
@@ -378,20 +577,32 @@ class Repodeploykeyspost(Command):
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\nNew deployment key added."
-            print "\nKey ID: %s\n" % (data['pk'])
-            print "Key: %s\n" % (data['key'])
-            print "Key Label: %s\n" % (data['label'])
+
+            msg = """
+New deployment key added."
+
+Key ID: {d[pk]}
+
+Key: {d[key]}
+
+Key Label: {d[label]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            print "\n Error: Someone has already registered this as an account SSH key.\n"
+            print ("\n Error: Someone has already registered"
+                   " this as an account SSH key.\n")
             sys.exit(1)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
 class Repodeploykeysedit(Command):
+
     """
     * Edit existing repository deployment key
     """
@@ -401,17 +612,44 @@ class Repodeploykeysedit(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repodeploykeysedit, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--key', '-k', metavar='<key>', required=True, help='The repository deploy-key')
-        parser.add_argument('--label', '-l', metavar='<key-label>', required=True, help='The repository deploy-key label')
-        parser.add_argument('--key_id', '-i', metavar='<key_id>', required=True, help='The repository deploy-key ID')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--key',
+            '-k',
+            metavar='<key>',
+            required=True,
+            help='The repository deploy-key')
+        parser.add_argument(
+            '--label',
+            '-l',
+            metavar='<key-label>',
+            required=True,
+            help='The repository deploy-key label')
+        parser.add_argument(
+            '--key_id',
+            '-i',
+            metavar='<key_id>',
+            required=True,
+            help='The repository deploy-key ID')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.key_id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/{a.key_id}").format(a=parsed_args)
 
         args = {}
 
@@ -424,22 +662,31 @@ class Repodeploykeysedit(Command):
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\nDeployment key edited."
-            print "\nKey ID: %s\n" % (data['pk'])
-            print "Key: %s\n" % (data['key'])
-            print "Key Label: %s\n" % (data['label'])
+            msg = """
+Deployment key edited."
+
+Key ID: {d[pk]}
+
+Key: {d[key]}
+
+Key Label: {d[label]}
+"""
+            print msg.format(d=data)
             sys.exit(0)
         elif r.status_code == 400:
-            print "\n Error: Someone has already registered this as an account SSH key.\n"
+            print ("\n Error: Someone has already"
+                   " registered this as an account SSH key.\n")
             sys.exit(1)
         else:
-            msg = '\n Error: "{r.status_code}" Invalid request, Invalid aaAccount name "{parsed_args.account}" or Repository Name "{parsed_args.reponame}"\n\n'
-            #msg = '\n Error: ' + '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n'
-            self.app.stdout.write(msg.format(r=r, parsed_args=parsed_args))
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid aaAccount name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
 class Repodeploykeysdelete(Command):
+
     """
     * Delete existing repository deployment key
     """
@@ -449,26 +696,50 @@ class Repodeploykeysdelete(Command):
 
     def get_parser(self, prog_name):
         parser = super(Repodeploykeysdelete, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--key_id', '-i', metavar='<key_id>', required=True, help='The repository deploy-key ID')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--key_id',
+            '-i',
+            metavar='<key_id>',
+            required=True,
+            help='The repository deploy-key ID')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/deploy-keys/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.key_id)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "deploy-keys/{a.key_id}").format(a=parsed_args.account)
 
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Success: Repository deployment key " + "'" + parsed_args.key_id + "'" " deleted.\n"
+            msg = """
+ Success: Repository deployment key '{a.key_id}' deleted.
+"""
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(1)
 
 
 class Repofork(ShowOne):
+
     """
     * Fork repository
     """
@@ -478,18 +749,50 @@ class Repofork(ShowOne):
 
     def get_parser(self, prog_name):
         parser = super(Repofork, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--name', '-n', metavar='<name>', required=True, help='The repository name')
-        parser.add_argument('--description', '-d', metavar='<description>', help='The repository description')
-        parser.add_argument('--is_private', '-p', metavar='<is_private>', choices=['true', 'false'], help='The repository is private ?')
-        parser.add_argument('--language', '-l', metavar='<language>', help='The repository language')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--name',
+            '-n',
+            metavar='<name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--description',
+            '-d',
+            metavar='<description>',
+            help='The repository description')
+        parser.add_argument(
+            '--is_private',
+            '-p',
+            metavar='<is_private>',
+            choices=[
+                'true',
+                'false'],
+            help='The repository is private ?')
+        parser.add_argument(
+            '--language',
+            '-l',
+            metavar='<language>',
+            help='The repository language')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/repositories/%s/%s/fork/" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "repositories/{a.account}/{a.reponame}/"
+               "fork/").format(a=parsed_args)
 
         args = {}
 
@@ -513,14 +816,20 @@ class Repofork(ShowOne):
             data.pop('fork_of')
             columns = data.viewkeys()
             data = data.viewvalues()
-            print "\nRepository " + "'" + parsed_args.reponame + "'" " Forked.\n"
+            msg = "\nRepository '{a.reponame}' Forked.\n"
+            print msg.format(a=parsed_args)
             return (columns, data)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a..account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
 class Reporevision(Command):
+
     """
     * Returns repository revision details
     """
@@ -530,29 +839,56 @@ class Reporevision(Command):
 
     def get_parser(self, prog_name):
         parser = super(Reporevision, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--revision', '-R', metavar='<revision>', required=True, help='The repository revision or branch name')
-        parser.add_argument('--path', '-p', metavar='<path>', help='File or directory path')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--revision',
+            '-R',
+            metavar='<revision>',
+            required=True,
+            help='The repository revision or branch name')
+        parser.add_argument(
+            '--path',
+            '-p',
+            metavar='<path>',
+            help='File or directory path')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         if parsed_args.path:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.revision,parsed_args.path)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "src/{a.revision}/{a.path}").format(a=parsed_args)
         else:
-            url = "https://bitbucket.org/api/1.0/repositories/%s/%s/src/%s/" % (parsed_args.account,parsed_args.reponame,parsed_args.revision)
+            url = ("https://bitbucket.org/api/1.0/"
+                   "repositories/{a.account}/{a.reponame}/"
+                   "src/{a.revision}/").format(a=parsed_args)
 
         r = requests.get(url, auth=(user, passwd))
 
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Repository Source Details: \n"
-            print "Revision: '%s'" % (data['node'])
-            print "Path: '%s'" % (data['path'])
-            print "directories: %s" % (data['directories'])
-            print "Files: "
+            msg = """
+ Repository Source Details:
+
+Revision: '{d[node]}'
+Path: '{d[path]}'
+directories: {d[directories]}
+Files:
+"""
+            print msg.format(d=data)
             for f in data['files']:
                 newdata = prettytable.PrettyTable(["Fields", "Values"])
                 newdata.padding_width = 1
@@ -563,11 +899,15 @@ class Reporevision(Command):
                 print newdata
             sys.exit(0)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a..account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
 class Reposharepost(Command):
+
     """
     * Share repository with other users
     """
@@ -577,33 +917,67 @@ class Reposharepost(Command):
 
     def get_parser(self, prog_name):
         parser = super(Reposharepost, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--share', '-s', metavar='<share_with>', required=True, help='Share repository with user')
-        parser.add_argument('--permission', '-p', metavar='<permission>', required=True, choices=['read', 'write', 'admin'], help='Repository permission')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--share',
+            '-s',
+            metavar='<share_with>',
+            required=True,
+            help='Share repository with user')
+        parser.add_argument(
+            '--permission',
+            '-p',
+            metavar='<permission>',
+            required=True,
+            choices=[
+                'read',
+                'write',
+                'admin'],
+            help='Repository permission')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.share)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}/"
+               "{a.share}").format(a=parsed_args)
 
         args = {}
         args['permission'] = parsed_args.permission
-        r = requests.put(url, data=parsed_args.permission, auth=(user,passwd))
+        r = requests.put(url, data=parsed_args.permission, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
-            print "\n Repository " + "'" + parsed_args.reponame + "'" + " shared with " + "'" + parsed_args.share + "'"
-            print "\nRepository: %s" % (data[0]['repo'])
-            print "Shared with: %s" % (data[0]['user']['username'])
-            print "Permission: %s" % (data[0]['privilege'])
+
+            msg = """
+ Repository '{a.reponame}' shared with '{a.share}'
+
+Repository: {d[0][repo]}
+Shared with: {d[0][user][username]}
+Permission: {d[0][privilege]}"""
+            print msg.format(d=data)
             sys.exit(0)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(a=parsed_args, r=r))
             sys.exit(1)
 
 
 class Reposhareget(Command):
+
     """
     * Get list of users repository shared with
     """
@@ -613,30 +987,49 @@ class Reposhareget(Command):
 
     def get_parser(self, prog_name):
         parser = super(Reposhareget, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s" % (parsed_args.account,parsed_args.reponame)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}").format(a=parsed_args)
 
-        r = requests.get(url, auth=(user,passwd))
+        r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
+
+            loopmsg = """
+Repository: {i[repo]}
+Shared with: {i[user][username]}
+Permission: {i[privilege]}
+================================================"
+"""
             for i in data:
-                print "\nRepository: %s" % (i['repo'])
-                print "Shared with: %s" % (i['user']['username'])
-                print "Permission: %s" % (i['privilege'])
-                print "================================================"
+                print loopmsg.format(i=i)
             sys.exit(0)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}" Invalid request,'
+                   ' Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
 class Reposharedelete(Command):
+
     """
     * Remove users access to repository
     """
@@ -646,22 +1039,44 @@ class Reposharedelete(Command):
 
     def get_parser(self, prog_name):
         parser = super(Reposharedelete, self).get_parser(prog_name)
-        parser.add_argument('--account', '-a', metavar='<account name>', required=True, help='Your account name')
-        parser.add_argument('--reponame', '-r', metavar='<repo name>', required=True, help='The repository name')
-        parser.add_argument('--share', '-s', metavar='<share_with>', required=True, help='Share repository with user')
+        parser.add_argument(
+            '--account',
+            '-a',
+            metavar='<account name>',
+            required=True,
+            help='Your account name')
+        parser.add_argument(
+            '--reponame',
+            '-r',
+            metavar='<repo name>',
+            required=True,
+            help='The repository name')
+        parser.add_argument(
+            '--share',
+            '-s',
+            metavar='<share_with>',
+            required=True,
+            help='Share repository with user')
         return parser
 
-    def take_action(self,parsed_args):
-        self.log.debug('take_action(%s)' % parsed_args)
+    def take_action(self, parsed_args):
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
-        url = "https://bitbucket.org/api/1.0/privileges/%s/%s/%s" % (parsed_args.account,parsed_args.reponame,parsed_args.share)
+        url = ("https://bitbucket.org/api/1.0/"
+               "privileges/{a.account}/{a.reponame}/"
+               "{a.share}").format(a=parsed_args)
 
-        r = requests.delete(url, auth=(user,passwd))
+        r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
-            print "\n Privileges for user " + "'" + parsed_args.share + "'" + " removed on repository " + "'" + parsed_args.reponame + "'"
+            msg = ("\n Privileges for user '{a.share}'"
+                   " removed on repository '{a.reponame}'")
+            print msg.format(a=parsed_args)
             sys.exit(0)
         else:
-            self.app.stdout.write('\n Error: '+ '"' + str(r.status_code) + '"' + ' Invalid request, Invalid Account name ' + '"' +  parsed_args.account + '" or Repository Name ' + '"' + parsed_args.reponame + '"' + '\n\n')
+            msg = ('\n Error: "{r.status_code}"'
+                   ' Invalid request, Invalid Account name "{a.account}"'
+                   ' or Repository Name "{a.reponame}"\n\n')
+            self.app.stdout.write(msg.format(r=r, a=parsed_args))
             sys.exit(1)
 
 
