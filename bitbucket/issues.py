@@ -232,6 +232,7 @@ class Getissue(ShowOne):
                 csvdata.headers = [
                     "ID",
                     "Status",
+                    "Title",
                     "Kind",
                     "Priority",
                     "Version",
@@ -255,6 +256,11 @@ class Getissue(ShowOne):
 
                         if 'status' in i:
                             row.append(i['status'])
+                        else:
+                            row.append('None')
+
+                        if 'title' in i:
+                            row.append(i['title'])
                         else:
                             row.append('None')
 
@@ -368,6 +374,7 @@ Issue_Title: {i[title]}
                 csvdata.headers = [
                     "ID",
                     "Status",
+                    "Title",
                     "Kind",
                     "Priority",
                     "Version",
@@ -393,6 +400,11 @@ Issue_Title: {i[title]}
 
                         if 'status' in i:
                             row.append(i['status'])
+                        else:
+                            row.append('None')
+
+                        if 'title' in i:
+                            row.append(i['title'])
                         else:
                             row.append('None')
 
