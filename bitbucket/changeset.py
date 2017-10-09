@@ -204,7 +204,7 @@ class Changesetcommentsget(Command):
         return parser
 
     def take_action(self, parsed_args):
-        self.log.debug('take_action({p})'.format(a=parsed_args))
+        self.log.debug('take_action({a})'.format(a=parsed_args))
 
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
