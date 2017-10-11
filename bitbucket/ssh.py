@@ -13,24 +13,12 @@
 # limitations under the License.
 
 
-import os
 import sys
-import imp
 import json
 import logging
 import requests
-from os.path import expanduser
 from cliff.command import Command
-
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class Sshkeyget(Command):
@@ -64,6 +52,7 @@ class Sshkeyget(Command):
         if parsed_args.key_id:
             url = "https://bitbucket.org/api/1.0/users/%s/ssh-keys/%s" % (
                 parsed_args.account, parsed_args.key_id)
+            user, passwd = read_creds()
             r = requests.get(url, auth=(user, passwd))
             if r.status_code == 200:
                 data = json.loads(r.text)
@@ -79,6 +68,7 @@ class Sshkeyget(Command):
         else:
             url = "https://bitbucket.org/api/1.0/users/%s/ssh-keys/" % (
                 parsed_args.account)
+            user, passwd = read_creds()
             r = requests.get(url, auth=(user, passwd))
             if r.status_code == 200:
                 data = json.loads(r.text)
@@ -138,6 +128,7 @@ class Sshkeypost(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "users/{a.account}/ssh-keys/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -192,6 +183,7 @@ class Sshkeydelete(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "users/{a.account}/"
                "ssh-keys/{a.key_id}").forma(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             print "\n Key ID '{a.key_id}' deleted.\n".format(a=parsed_args)

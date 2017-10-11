@@ -13,26 +13,15 @@
 # limitations under the License.
 
 
-import os
 import sys
-import imp
 import json
 import logging
 import requests
 import prettytable
-from os.path import expanduser
 from cliff.command import Command
 from cliff.lister import Lister
 from cliff.show import ShowOne
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class Repocreate(ShowOne):
@@ -127,6 +116,7 @@ class Repocreate(ShowOne):
             args['has_wiki'] = parsed_args.has_wiki
 
         url = "https://bitbucket.org/api/1.0/repositories"
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -235,6 +225,7 @@ class Repoedit(ShowOne):
 
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.}/{a.}/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -283,6 +274,7 @@ class Repodelete(Command):
         self.log.debug('take_action({a})'.format(a=parsed_args))
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             msg = "\n Repository '{a.reponame}' Deleted.\n"
@@ -305,6 +297,7 @@ class Repolist(Lister):
     requests_log.setLevel(logging.WARNING)
 
     def take_action(self, parsed_args):
+        user, passwd = read_creds()
         self.log.debug('take_action({a})'.format(a=parsed_args))
         url = ("https://bitbucket.org/api/1.0/"
                "user/repositories/")
@@ -338,6 +331,7 @@ class Repodetail(ShowOne):
         self.log.debug('take_action({a})'.format(a=parsed_args))
         url = ("https://bitbucket.org/api/1.0/"
                "user/repositories/")
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         data = json.loads(r.text)
         for i in data:
@@ -384,6 +378,7 @@ class Repotag(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
                "tags/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -439,6 +434,7 @@ class Repobranch(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
                "branches").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -494,7 +490,7 @@ class Repodeploykeysget(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
                "deploy-keys/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -573,7 +569,7 @@ class Repodeploykeyspost(Command):
 
         if parsed_args.label:
             args['label'] = parsed_args.label
-
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -658,7 +654,7 @@ class Repodeploykeysedit(Command):
 
         if parsed_args.label:
             args['label'] = parsed_args.label
-
+        user, passwd = read_creds()
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -722,7 +718,7 @@ class Repodeploykeysdelete(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
                "deploy-keys/{a.key_id}").format(a=parsed_args.account)
-
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             msg = """
@@ -806,7 +802,7 @@ class Repofork(ShowOne):
 
         if parsed_args.language:
             args['language'] = parsed_args.language
-
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
 
         if r.status_code == 200:
@@ -875,7 +871,7 @@ class Reporevision(Command):
             url = ("https://bitbucket.org/api/1.0/"
                    "repositories/{a.account}/{a.reponame}/"
                    "src/{a.revision}/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
 
         if r.status_code == 200:
@@ -956,6 +952,7 @@ class Reposharepost(Command):
 
         args = {}
         args['permission'] = parsed_args.permission
+        user, passwd = read_creds()
         r = requests.put(url, data=parsed_args.permission, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -1006,7 +1003,7 @@ class Reposhareget(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "privileges/{a.account}/{a.reponame}").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -1065,7 +1062,7 @@ class Reposharedelete(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "privileges/{a.account}/{a.reponame}/"
                "{a.share}").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             msg = ("\n Privileges for user '{a.share}'"

@@ -13,25 +13,13 @@
 # limitations under the License.
 
 
-import os
 import sys
-import imp
 import json
 import logging
 import requests
 import prettytable
-from os.path import expanduser
 from cliff.command import Command
-
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class Changesetget(Command):
@@ -84,7 +72,7 @@ class Changesetget(Command):
                    "repositories/{a.account}/{a.reponame}/"
                    "changesets"
                    "?limit={a.limit}").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code != 200:
             print "\n Error: '{r.status_code}' No Changeset Found.".format(r=r)
@@ -149,7 +137,7 @@ class Commitget(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/changesets/{a.commit}")
         url = url.format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code != 200:
             print "\n Error: '{r.status_code}' No Commit ID Found.".format(r=r)
@@ -205,11 +193,10 @@ class Changesetcommentsget(Command):
 
     def take_action(self, parsed_args):
         self.log.debug('take_action({a})'.format(a=parsed_args))
-
         url = ("https://bitbucket.org/api/1.0/"
                "repositories/{a.account}/{a.reponame}/"
                "changesets/{a.commit}/comments/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -284,6 +271,7 @@ class Changesetcommentpost(Command):
 
         args = {}
         args['content'] = parsed_args.comment
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -347,7 +335,7 @@ class Changesetcommentdelete(Command):
                "repositories/{a.account}/{a.reponame}/"
                "changesets/{a.commit}/"
                "comments/{a.comment_id}").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)

@@ -13,22 +13,11 @@
 # limitations under the License.
 
 
-import os
-import imp
 import json
 import logging
 import requests
-from os.path import expanduser
 from cliff.show import ShowOne
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class User(ShowOne):
@@ -44,6 +33,7 @@ class User(ShowOne):
         self.log.debug('take_action({a})'.format(a=parsed_args))
         url = ("https://bitbucket.org/api/1.0/"
                "user/")
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         jsondata = json.loads(r.text)
         userdata = jsondata['user']
@@ -68,6 +58,7 @@ class Userprivileges(ShowOne):
         url = ("https://bitbucket.org/api/1.0/"
                "user/"
                "privileges/")
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         jsondata = json.loads(r.text)
         userdata = jsondata['teams']

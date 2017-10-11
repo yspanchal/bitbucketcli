@@ -13,25 +13,13 @@
 # limitations under the License.
 
 
-import os
 import sys
-import imp
 import json
 import logging
 import requests
 import prettytable
-from os.path import expanduser
 from cliff.command import Command
-
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class Groups(Command):
@@ -63,6 +51,7 @@ class Groups(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "groups/{a.account}/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -140,7 +129,7 @@ class Creategroup(Command):
 
         if parsed_args.autoadd:
             args['auto_add'] = parsed_args.autoadd
-
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -203,7 +192,7 @@ class Deletegroup(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "groups/{a.account}/{a.name}/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             print "\n Group '{a.name}' deleted.\n".format(a=parsed_args)
@@ -248,7 +237,7 @@ class Groupmembers(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "groups/{a.account}/{a.name}/members/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -301,7 +290,7 @@ class Addgroupmember(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "groups/{a.account}/{a.name}/"
                "members/{a.member}/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.put(url, auth=(user, passwd))
         if r.status_code == 200:
             msg = """
@@ -362,7 +351,7 @@ class Deletegroupmember(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "groups/{a.account}/{a.name}/"
                "members/{a.member}/").format(a=parsed_args)
-
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             msg = """

@@ -13,27 +13,16 @@
 # limitations under the License.
 
 
-import os
 import sys
 import json
-import imp
 import urllib
 import tablib
 import logging
 import requests
 import prettytable
-from os.path import expanduser
 from cliff.command import Command
 from cliff.show import ShowOne
-
-try:
-    home = expanduser("~")
-    filename = os.path.join(home, '.bitbucket.py')
-    creds = imp.load_source('.bitbucket', filename)
-    user = creds.username
-    passwd = creds.passwd
-except (IOError, NameError):
-    pass
+from utils import read_creds
 
 
 class Getissue(ShowOne):
@@ -212,7 +201,7 @@ class Getissue(ShowOne):
         else:
             self.app.stdout.write('\nInvalid argument supplied.\n')
             sys.exit(1)
-
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
 
         try:
@@ -636,7 +625,7 @@ class Createissue(ShowOne):
 
         url = "https://bitbucket.org/api/1.0/repositories/%s/%s/issues" % (
             parsed_args.account, parsed_args.reponame)
-
+        user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -808,7 +797,7 @@ class Editissue(ShowOne):
             reponame,
             parsed_args.
             id)
-
+        user, passwd = read_creds()
         r = requests.put(url, data=args, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -881,6 +870,7 @@ class Deleteissue(Command):
             reponame,
             parsed_args.
             id)
+        user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             self.app.stdout.write("\nIssue Deleted Successfully.\n\n")
@@ -929,6 +919,7 @@ class Getcomment(Command):
                "repositories/{a.account}/{a.reponame}/"
                "issues/{a.id}/"
                "comments/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -999,6 +990,7 @@ class Postcomment(Command):
                "repositories/{a.account}/{a.reponame}/"
                "issues/{a.id}/"
                "comments/").format(a=parsed_args)
+        user, passwd = read_creds()
         r = requests.post(url, data=parsed_args.content, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
