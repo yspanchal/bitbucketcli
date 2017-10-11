@@ -74,6 +74,7 @@ class BitBucketApp(App):
                 f = open(filename, 'w')
                 f.write("username = " + "'" + user + "'" + "\n")
                 f.write("passwd = " + "'" + p1 + "'" + "\n")
+                f.close()
                 print("Login Successful.\n")
                 data = json.loads(r.text)
                 print "Username: " + data['user']['username']
