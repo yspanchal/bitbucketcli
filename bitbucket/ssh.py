@@ -182,7 +182,7 @@ class Sshkeydelete(Command):
 
         url = ("https://bitbucket.org/api/1.0/"
                "users/{a.account}/"
-               "ssh-keys/{a.key_id}").forma(a=parsed_args)
+               "ssh-keys/{a.key_id}").format(a=parsed_args)
         user, passwd = read_creds()
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
