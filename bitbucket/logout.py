@@ -40,7 +40,7 @@ class Login(Command):
 
     def take_action(self, parsed_args):
         if not os.path.exists(filename):
-            print "Login to Your BitBucket Account.\n"
+            print("Login to Your BitBucket Account.\n")
             url = "https://bitbucket.org/api/1.0/user/"
             user = raw_input(
                 'Enter BitBucket Username or Email [%s]:' %
@@ -52,7 +52,7 @@ class Login(Command):
             p2 = getpass.getpass('Enter Password (Again): ')
 
             if p1 != p2:
-                print "\n Password do not match. Try Again\n"
+                print("\n Password do not match. Try Again\n")
                 sys.exit(1)
             else:
                 passwd = p1
@@ -66,14 +66,14 @@ class Login(Command):
                 f.write("passwd = " + "'" + p1 + "'" + "\n")
                 print("Login Successful.")
                 data = json.loads(r.text)
-                print "\nUsername: " + data['user']['username']
-                print "Display Name: " + data['user']['display_name']
+                print("\nUsername: " + data['user']['username'])
+                print("Display Name: " + data['user']['display_name'])
                 sys.exit(0)
             else:
-                print "\n Authentication Error. Invalid Username or Password\n"
+                print("\n Authentication Error. Invalid Username or Password\n")
                 sys.exit(1)
         else:
-            print "\n You are logged in\n"
+            print("\n You are logged in\n")
             sys.exit(0)
 
 
@@ -90,4 +90,4 @@ class Logout(Command):
         home = expanduser("~")
         filename = os.path.join(home, '.bitbucket.py')
         os.remove(filename)
-        print "\n Logout Successfully\n\n"
+        print("\n Logout Successfully\n\n")

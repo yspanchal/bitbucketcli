@@ -21,7 +21,7 @@ import prettytable
 from cliff.command import Command
 from cliff.lister import Lister
 from cliff.show import ShowOne
-from utils import read_creds
+from .utils import read_creds
 
 
 class Repocreate(ShowOne):
@@ -122,10 +122,10 @@ class Repocreate(ShowOne):
             data = json.loads(r.text)
             data.pop('logo')
             data.pop('resource_uri')
-            columns = data.viewkeys()
-            data = data.viewvalues()
+            columns = data.keys()
+            data = data.values()
             msg = "\nRepository '{a.reponame}' Created.\n"
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             return (columns, data)
         elif r.status_code == 400:
 
@@ -231,14 +231,14 @@ class Repoedit(ShowOne):
             data = json.loads(r.text)
             data.pop('logo')
             data.pop('resource_uri')
-            columns = data.viewkeys()
-            data = data.viewvalues()
+            columns = data.keys()
+            data = data.values()
             msg = "\nRepository '{a.reponame}' Edited.\n"
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             return (columns, data)
         if r.status_code == 400:
             msg = "'{a.language}' is not valid language choice."
-            print msg .format(a=parsed_args)
+            print(msg .format(a=parsed_args))
             sys.exit(1)
         else:
             self.app.stdout.write('\nError: Bad request.\n')
@@ -278,12 +278,12 @@ class Repodelete(Command):
         r = requests.delete(url, auth=(user, passwd))
         if r.status_code == 204:
             msg = "\n Repository '{a.reponame}' Deleted.\n"
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             sys.exit(0)
         else:
             msg = (" Error: Invalid requests, '{r.status_code}'"
                    " or No such repository found.")
-            print msg.format(r=r)
+            print(msg.format(r=r))
             sys.exit(1)
 
 
@@ -338,8 +338,8 @@ class Repodetail(ShowOne):
             if i['name'] == parsed_args.reponame:
                 i.pop('logo')
                 i.pop('resource_uri')
-                columns = i.viewkeys()
-                data = i.viewvalues()
+                columns = i.keys()
+                data = i.values()
                 return (columns, data)
 
         msg = '\nError: "{a.reponame}" No such repository found.\n\n'
@@ -395,7 +395,7 @@ class Repotag(Command):
                     newdata.add_row(["TimeStamp", data[i]['timestamp']])
                     newdata.add_row(["Commit ID", data[i]['raw_node']])
                     newdata.add_row(["Message", data[i]['message']])
-                    print newdata
+                    print(newdata)
         else:
             msg = ('\n Error: "{r.status_code}" Invalid request,'
                    ' Invalid Account name "{a.account}"'
@@ -451,7 +451,7 @@ class Repobranch(Command):
                     newdata.add_row(["TimeStamp", data[i]['timestamp']])
                     newdata.add_row(["Commit ID", data[i]['raw_node']])
                     newdata.add_row(["Message", data[i]['message']])
-                    print newdata
+                    print(newdata)
         else:
             msg = ('\n Error: "{r.status_code}" Invalid request,'
                    ' Invalid Account name "{a.account}"'
@@ -502,10 +502,10 @@ Key Label: {k[label]}
 =======================================================
 """
                 for key in data:
-                    print loopmsg.format(k=key)
+                    print(loopmsg.format(k=key))
                 sys.exit(0)
             else:
-                print "\n No deployment key found.\n"
+                print("\n No deployment key found.\n")
                 sys.exit(0)
         else:
             msg = ('\n'
@@ -571,6 +571,7 @@ class Repodeploykeyspost(Command):
             args['label'] = parsed_args.label
         user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
+        print(r.text)
         if r.status_code == 200:
             data = json.loads(r.text)
 
@@ -583,7 +584,7 @@ Key: {d[key]}
 
 Key Label: {d[label]}
 """
-            print msg.format(d=data)
+            print(msg.format(d=data))
             sys.exit(0)
         elif r.status_code == 400:
             print ("\n Error: Someone has already registered"
@@ -656,6 +657,7 @@ class Repodeploykeysedit(Command):
             args['label'] = parsed_args.label
         user, passwd = read_creds()
         r = requests.put(url, data=args, auth=(user, passwd))
+        print(r.text)
         if r.status_code == 200:
             data = json.loads(r.text)
             msg = """
@@ -667,7 +669,7 @@ Key: {d[key]}
 
 Key Label: {d[label]}
 """
-            print msg.format(d=data)
+            print(msg.format(d=data))
             sys.exit(0)
         elif r.status_code == 400:
             print ("\n Error: Someone has already"
@@ -724,7 +726,7 @@ class Repodeploykeysdelete(Command):
             msg = """
  Success: Repository deployment key '{a.key_id}' deleted.
 """
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             sys.exit(0)
         else:
             msg = ('\n Error: "{r.status_code}"'
@@ -810,10 +812,10 @@ class Repofork(ShowOne):
             data.pop('logo')
             data.pop('resource_uri')
             data.pop('fork_of')
-            columns = data.viewkeys()
-            data = data.viewvalues()
+            columns = data.keys()
+            data = data.values()
             msg = "\nRepository '{a.reponame}' Forked.\n"
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             return (columns, data)
         else:
 
@@ -884,7 +886,7 @@ Path: '{d[path]}'
 directories: {d[directories]}
 Files:
 """
-            print msg.format(d=data)
+            print(msg.format(d=data))
             for f in data['files']:
                 newdata = prettytable.PrettyTable(["Fields", "Values"])
                 newdata.padding_width = 1
@@ -892,7 +894,7 @@ Files:
                 newdata.add_row(["Path", f['path']])
                 newdata.add_row(["TimeStamp", f['timestamp']])
                 newdata.add_row(["Revision", f['revision']])
-                print newdata
+                print(newdata)
             sys.exit(0)
         else:
             msg = ('\n Error: "{r.status_code}" Invalid request,'
@@ -944,6 +946,7 @@ class Reposharepost(Command):
         return parser
 
     def take_action(self, parsed_args):
+        print("enters")
         self.log.debug('take_action({a})'.format(a=parsed_args))
 
         url = ("https://bitbucket.org/api/1.0/"
@@ -954,6 +957,7 @@ class Reposharepost(Command):
         args['permission'] = parsed_args.permission
         user, passwd = read_creds()
         r = requests.put(url, data=parsed_args.permission, auth=(user, passwd))
+        print(r.text)
         if r.status_code == 200:
             data = json.loads(r.text)
 
@@ -963,7 +967,7 @@ class Reposharepost(Command):
 Repository: {d[0][repo]}
 Shared with: {d[0][user][username]}
 Permission: {d[0][privilege]}"""
-            print msg.format(d=data)
+            print(msg.format(d=data))
             sys.exit(0)
         else:
             msg = ('\n Error: "{r.status_code}" Invalid request,'
@@ -1004,6 +1008,7 @@ class Reposhareget(Command):
         url = ("https://bitbucket.org/api/1.0/"
                "privileges/{a.account}/{a.reponame}").format(a=parsed_args)
         user, passwd = read_creds()
+
         r = requests.get(url, auth=(user, passwd))
         if r.status_code == 200:
             data = json.loads(r.text)
@@ -1015,7 +1020,7 @@ Permission: {i[privilege]}
 ================================================"
 """
             for i in data:
-                print loopmsg.format(i=i)
+                print(loopmsg.format(i=i))
             sys.exit(0)
         else:
             msg = ('\n Error: "{r.status_code}" Invalid request,'
@@ -1067,7 +1072,7 @@ class Reposharedelete(Command):
         if r.status_code == 204:
             msg = ("\n Privileges for user '{a.share}'"
                    " removed on repository '{a.reponame}'")
-            print msg.format(a=parsed_args)
+            print(msg.format(a=parsed_args))
             sys.exit(0)
         else:
             msg = ('\n Error: "{r.status_code}"'
