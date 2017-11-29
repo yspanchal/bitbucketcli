@@ -19,7 +19,7 @@ import logging
 import requests
 import prettytable
 from cliff.command import Command
-from utils import read_creds
+from .utils import read_creds
 
 
 class Changesetget(Command):
@@ -75,7 +75,7 @@ class Changesetget(Command):
         user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code != 200:
-            print "\n Error: '{r.status_code}' No Changeset Found.".format(r=r)
+            print("\n Error: '{r.status_code}' No Changeset Found.".format(r=r))
             sys.exit(1)
         else:
             data = json.loads(r.text)
@@ -83,7 +83,7 @@ class Changesetget(Command):
 Total Changeset:"
 d[count], Start: d[start], Limit: [d[limit]"
 """
-            print msg.format(d=data)
+            print(msg.format(d=data))
             msg = """{newdata}
 Author: {i[author]}
 Timestamp: {i[timestamp]}
@@ -97,7 +97,7 @@ Commit Message: {i[message]}
                 for f in i['files']:
                     newdata.add_row([f['type'], f['file']])
 
-                print msg.format(newdata=newdata, i=i)
+                print(msg.format(newdata=newdata, i=i))
 
 
 class Commitget(Command):
@@ -140,11 +140,11 @@ class Commitget(Command):
         user, passwd = read_creds()
         r = requests.get(url, auth=(user, passwd))
         if r.status_code != 200:
-            print "\n Error: '{r.status_code}' No Commit ID Found.".format(r=r)
+            print("\n Error: '{r.status_code}' No Commit ID Found.".format(r=r))
             sys.exit(1)
         else:
             data = json.loads(r.text)
-            print "\nCommit ID: {d[raw_node]}\n".format(d=data)
+            print("\nCommit ID: {d[raw_node]}\n".format(d=data))
 
             for i in data['files']:
                 newdata = prettytable.PrettyTable(["Type", "File"])
@@ -157,7 +157,7 @@ Timestamp: {d[timestamp]}
 Branches: {d[branches]}
 Commit Message: {d[message]}
 -------------------------------------------------------"""
-            print msg.format(newdata=newdata, d=data)
+            print(msg.format(newdata=newdata, d=data))
 
 
 class Changesetcommentsget(Command):
@@ -202,7 +202,7 @@ class Changesetcommentsget(Command):
             data = json.loads(r.text)
             for comment in data:
                 if 'content' not in comment:
-                    print "\n No Any Comments Found.\n"
+                    print("\n No Any Comments Found.\n")
                     sys.exit(1)
             else:
                 msg = """
@@ -217,11 +217,11 @@ Comment: {comment[content]}
                     newdata.add_row(["Comment ID", comment['comment_id']])
                     newdata.add_row(["Created On", comment['utc_created_on']])
                     newdata.add_row(["Updated On", comment['utc_last_updated']])
-                    print msg.format(comment=comment, newdata=newdata)
+                    print(msg.format(comment=comment, newdata=newdata))
 
                 sys.exit(0)
         else:
-            print "\n Error: Invalid request, or invalid commit id"
+            print("\n Error: Invalid request, or invalid commit id")
             sys.exit(1)
 
 
@@ -284,10 +284,10 @@ class Changesetcommentpost(Command):
 Commit ID: {d[node]}
 Comment: {d[content]}
 {newdata}"""
-            print msg.format(newdata=newdata, d=data)
+            print(msg.format(newdata=newdata, d=data))
             sys.exit(0)
         else:
-            print "\n Error: Invalid request, or invalid commit id"
+            print("\n Error: Invalid request, or invalid commit id")
             sys.exit(1)
 
 
@@ -344,9 +344,9 @@ class Changesetcommentdelete(Command):
 Commit ID: {data[node]}
 Comment ID: {data[comment_id]}
 Comment '{data[comment_id]}' deleted successfully."""
-            print msg.format(data=data)
+            print(msg.format(data=data))
             sys.exit(0)
         else:
-            print """
-Error: Invalid request, or invalid commit id or invalid comment id."""
+            print("""
+Error: Invalid request, or invalid commit id or invalid comment id.""")
             sys.exit(1)

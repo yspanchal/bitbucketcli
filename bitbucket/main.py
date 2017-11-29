@@ -48,9 +48,9 @@ class BitBucketApp(App):
         home = expanduser("~")
         filename = os.path.join(home, '.bitbucket.py')
         if not os.path.exists(filename):
-            print "Login to Your BitBucket Account.\n"
+            print("Login to Your BitBucket Account.\n")
             url = "https://bitbucket.org/api/1.0/user/"
-            user = raw_input(
+            user = input(
                 'Enter BitBucket Username or Email [%s]:' %
                 getpass.getuser())
             if not user:
@@ -59,7 +59,7 @@ class BitBucketApp(App):
             p1 = getpass.getpass('Enter Password: ')
             p2 = getpass.getpass('Enter Password (Again): ')
             if p1 != p2:
-                print "Password do not match. Try Again.\n"
+                print("Password do not match. Try Again.\n")
                 sys.exit(1)
             else:
                 passwd = p1
@@ -68,7 +68,7 @@ class BitBucketApp(App):
             r = requests.get(url, auth=(user, passwd))
             status = r.status_code
             if status != 200:
-                print "Authentication Error. Invalid Username or Password.\n"
+                print("Authentication Error. Invalid Username or Password.\n")
                 sys.exit(1)
             else:
                 f = open(filename, 'w')
@@ -77,8 +77,8 @@ class BitBucketApp(App):
                 f.close()
                 print("Login Successful.\n")
                 data = json.loads(r.text)
-                print "Username: " + data['user']['username']
-                print "Display Name: " + data['user']['display_name']
+                print("Username: " + data['user']['username'])
+                print("Display Name: " + data['user']['display_name'])
         else:
             pass
 

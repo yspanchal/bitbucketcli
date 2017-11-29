@@ -26,10 +26,10 @@ def read_creds():
         user = creds.username
         passwd = creds.passwd
         return user, passwd
-    except (IOError, NameError), e:
+    except (IOError, NameError) as e:
         log.error("Error with variable or file: " + str(e))
         raise e
-    except Exception, e:
+    except Exception as e:
         log.error("Unhandled error" + str(e))
         raise e
     pass

@@ -18,7 +18,7 @@ import json
 import logging
 import requests
 from cliff.command import Command
-from utils import read_creds
+from .utils import read_creds
 
 
 class Wikiget(Command):
@@ -70,9 +70,9 @@ Revision: {d[rev]}
 Page Content: {d[data]}
 
 """
-            print msg.format(d=data)
+            print(msg.format(d=data))
         else:
-            print ("\n Error: '404' No Wiki Pages Found"
+            print("\n Error: '404' No Wiki Pages Found"
                    " 'or' Invalid argument supplied.\n")
             sys.exit(1)
 
@@ -125,10 +125,11 @@ class Wikipost(Command):
                "wiki/{a.page}/").format(a=parsed_args)
         user, passwd = read_creds()
         r = requests.post(url, data=args, auth=(user, passwd))
+        print(r.text)
         if r.status_code == 200:
-            print "\n Wiki Page Created Successfully.\n"
+            print("\n Wiki Page Created Successfully.\n")
         else:
             msg = ("\n Error: '{r.status_code}' "
                    "Something Went Wrong -- Bitbucket.\n")
-            print msg.format(r=r)
+            print(msg.format(r=r))
             sys.exit(1)
